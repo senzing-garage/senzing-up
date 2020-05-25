@@ -14,7 +14,7 @@ describing where we can improve.   Now on with the show...
 
 ## Overview
 
-The [senzing-up.sh](senzing-up.sh) program creates and maintains an instance of Senzing in a single directory.
+[senzing-up.sh](senzing-up.sh) launches the Senzing Entity Search web application using a local SQLite database.
 
 ### Contents
 
@@ -22,7 +22,8 @@ The [senzing-up.sh](senzing-up.sh) program creates and maintains an instance of 
 1. [Demonstrate](#demonstrate)
     1. [Prerequisite software](#prerequisite-software)
     1. [Download](#download)
-    1. [Run command](#run-command)
+    1. [Start web application](#start-web-application)
+    1. [View web application](#view-web-application)
 1. [Errors](#errors)
 1. [References](#references)
 
@@ -36,7 +37,7 @@ The [senzing-up.sh](senzing-up.sh) program creates and maintains an instance of 
 
 ## Expectations
 
-- **Space:** This repository and demonstration require 2 MB free disk space.
+- **Space:** The demonstration requires 6 GB free disk space.
 - **Time:** Budget 30 minutes to get the demonstration up-and-running, depending on CPU and network speeds.
 
 ## Demonstrate
@@ -63,7 +64,7 @@ The following software programs need to be installed:
     chmod +x ~/senzing-up.sh
     ```
 
-### Run command
+### Start web application
 
 1. Run the command.
    In this example, the Senzing instance will be put into the `~/my-first-senzing-test` folder.
@@ -72,6 +73,10 @@ The following software programs need to be installed:
    ```console
    ~/senzing-up.sh ~/my-first-senzing-test
    ```
+
+### View web application
+
+1. Visit [http://localhost:8251](http://localhost:8251).
 
 ## Errors
 
