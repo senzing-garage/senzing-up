@@ -191,20 +191,6 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
     popd > /dev/null 2>&1
 fi
 
-# If needed, add senzing-environment.py.
-
-SENZING_ENVIRONMENT_FILENAME=${SENZING_PROJECT_DIR_REALPATH}/senzing-environment.py
-
-if [[ ( ! -e ${SENZING_ENVIRONMENT_FILENAME} ) ]]; then
-
-    curl -X GET \
-        --output ${SENZING_ENVIRONMENT_FILENAME} \
-        https://raw.githubusercontent.com/Senzing/senzing-environment/master/senzing-environment.py
-
-    chmod +x ${SENZING_ENVIRONMENT_FILENAME}
-
-fi
-
 # If needed, populate docker-bin directory.
 
 DOCKER_ENVIRONMENT_VARS_FILENAME=${SENZING_DOCKER_BIN_DIR}/docker-environment-vars.sh
@@ -213,11 +199,29 @@ if [[ ( ! -e ${DOCKER_ENVIRONMENT_VARS_FILENAME} ) \
    && ( ! -z ${PYTHON3_INSTALLED} ) \
    ]]; then
 
+    # If needed, add senzing-environment.py.
+
+    SENZING_ENVIRONMENT_FILENAME=${SENZING_PROJECT_DIR_REALPATH}/senzing-environment.py
+
+    if [[ ( ! -e ${SENZING_ENVIRONMENT_FILENAME} ) ]]; then
+
+        curl -X GET \
+            --output ${SENZING_ENVIRONMENT_FILENAME} \
+            https://raw.githubusercontent.com/Senzing/senzing-environment/master/senzing-environment.py
+
+        chmod +x ${SENZING_ENVIRONMENT_FILENAME}
+
+    fi
+
+    # Populate .../docker-bin directory.
+
     if [ ! -d ${SENZING_DOCKER_BIN_DIR} ]; then
         mkdir -p ${SENZING_DOCKER_BIN_DIR}
     fi
 
     ${SENZING_ENVIRONMENT_FILENAME} ${SENZING_ENVIRONMENT_SUBCOMMAND} --project-dir ${SENZING_PROJECT_DIR} > /dev/null 2>&1
+
+    mv ${SENZING_ENVIRONMENT_FILENAME} ${SENZING_DOCKER_BIN_DIR}
 
 fi
 
