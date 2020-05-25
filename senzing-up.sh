@@ -11,6 +11,28 @@ Where:
     project-dir = Path to new or existing Senzing project
 "
 
+# -----------------------------------------------------------------------------
+# Functions
+# -----------------------------------------------------------------------------
+
+find_realpath() {
+  OURPWD=$PWD
+  cd "$(dirname "$1")"
+  LINK=$(readlink "$(basename "$1")")
+  while [ "$LINK" ]; do
+    cd "$(dirname "$LINK")"
+    LINK=$(readlink "$(basename "$1")")
+  done
+  REALPATH="$PWD/$(basename "$1")"
+  cd "$OURPWD"
+  echo "$REALPATH"
+}
+realpath "$@"
+
+# -----------------------------------------------------------------------------
+# Main
+# -----------------------------------------------------------------------------
+
 # Parse positional input parameters.
 
 SENZING_PROJECT_DIR=$1
@@ -37,12 +59,6 @@ if [ ! -n "$(command -v docker)" ]; then
     exit 1
 fi
 
-if [ ! -n "$(command -v realpath)" ]; then
-    echo "ERROR: realpath is required."
-    echo "See https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-realpath.md"
-    exit 1
-fi
-
 if [ -n "$(command -v python3)" ]; then
     PYTHON3_INSTALLED=1
 else
@@ -57,7 +73,7 @@ SENZING_ENVIRONMENT_SUBCOMMAND=${SENZING_ENVIRONMENT_SUBCOMMAND:-"add-docker-sup
 # Synthesize variables.
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-SENZING_PROJECT_DIR_REALPATH=$(realpath ${SENZING_PROJECT_DIR})
+SENZING_PROJECT_DIR_REALPATH=$(find_realpath ${SENZING_PROJECT_DIR})
 
 SENZING_DATA_DIR=${SENZING_PROJECT_DIR_REALPATH}/data
 SENZING_DOCKER_BIN_DIR=${SENZING_PROJECT_DIR_REALPATH}/docker-bin
