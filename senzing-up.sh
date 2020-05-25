@@ -192,13 +192,9 @@ fi
 
 # If needed, add senzing-environment.py.
 
-SENZING_ENVIRONMENT_FILENAME=${SENZING_DOCKER_BIN_DIR}/senzing-environment.py
+SENZING_ENVIRONMENT_FILENAME=${SENZING_PROJECT_DIR_REALPATH}/senzing-environment.py
 
 if [[ ( ! -e ${SENZING_ENVIRONMENT_FILENAME} ) ]]; then
-
-    if [ ! -d ${SENZING_DOCKER_BIN_DIR} ]; then
-        mkdir -p ${SENZING_DOCKER_BIN_DIR}
-    fi
 
     curl -X GET \
         --output ${SENZING_ENVIRONMENT_FILENAME} \
@@ -215,6 +211,10 @@ DOCKER_ENVIRONMENT_VARS_FILENAME=${SENZING_DOCKER_BIN_DIR}/docker-environment-va
 if [[ ( ! -e ${DOCKER_ENVIRONMENT_VARS_FILENAME} ) \
    && ( ! -z ${PYTHON3_INSTALLED} ) \
    ]]; then
+
+    if [ ! -d ${SENZING_DOCKER_BIN_DIR} ]; then
+        mkdir -p ${SENZING_DOCKER_BIN_DIR}
+    fi
 
     ${SENZING_ENVIRONMENT_FILENAME} ${SENZING_ENVIRONMENT_SUBCOMMAND} --project-dir ${SENZING_PROJECT_DIR} > /dev/null 2>&1
 
