@@ -21,12 +21,35 @@ if [ -z ${SENZING_PROJECT_DIR} ]; then
     exit 1
 fi
 
+# Verify environment. curl, docker, python3
+
+if [ ! -n "$(command -v curl)" ]; then
+    echo "ERROR: curl is required."
+    echo "See https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-curl.md"
+    exit 1
+fi
+
+if [ ! -n "$(command -v docker)" ]; then
+    echo "ERROR: docker is required. !!!"
+    echo "See https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-docker.md"
+    exit 1
+fi
+
+if [ -n "$(command -v python3)" ]; then
+    PYTHON3_INSTALLED=1
+fi
+
+# Configuration via environment variables.
+
+SENZING_ENVIRONMENT_SUBCOMMAND=${SENZING_ENVIRONMENT_SUBCOMMAND:-"add-docker-support-macos"}
+
 # Synthesize variables.
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 SENZING_PROJECT_DIR_REALPATH=$(realpath ${SENZING_PROJECT_DIR})
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 SENZING_DATA_DIR=${SENZING_PROJECT_DIR_REALPATH}/data
+SENZING_DOCKER_BIN_DIR=${SENZING_PROJECT_DIR_REALPATH}/docker-bin
 SENZING_ETC_DIR=${SENZING_PROJECT_DIR_REALPATH}/etc
 SENZING_G2_DIR=${SENZING_PROJECT_DIR_REALPATH}/g2
 SENZING_PROJECT_NAME=$(basename "${SENZING_PROJECT_DIR_REALPATH}")
@@ -40,6 +63,7 @@ echo ""
 # Debug
 
 # echo "export SENZING_DATA_DIR=${SENZING_DATA_DIR}"
+# echo "export SENZING_DOCKER_BIN_DIR=${SENZING_DOCKER_BIN_DIR}"
 # echo "export SENZING_ETC_DIR=${SENZING_ETC_DIR}"
 # echo "export SENZING_G2_DIR=${SENZING_G2_DIR}"
 # echo "export SENZING_PROJECT_DIR_REALPATH=${SENZING_PROJECT_DIR_REALPATH}"
@@ -48,11 +72,14 @@ echo ""
 
 # Prompt user.
 
-read -p "Would you like to install updates?  <y|N> " PERFORM_UPDATES
+read -p "Would you like to detect and install updates?  [y|N] " UPDATES_RESPONSE
+if [ ! -z ${UPDATES_RESPONSE} ] && [ ${UPDATES_RESPONSE^} == "Y" ]; then
+    PERFORM_UPDATES=1
+fi
 
 # If requested, perform updates.
 
-if [ ! -z ${PERFORM_UPDATES} ] && [ ${PERFORM_UPDATES^} == "Y" ]; then
+if [ ! -z ${PERFORM_UPDATES} ]; then
     docker pull senzing/yum:latest
     docker pull senzing/init-container:latest
     docker pull senzing/web-app-demo:latest
@@ -67,8 +94,7 @@ fi
 # If new project or update requested, install/update Senzing.
 
 if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
-       || (( ! -z ${PERFORM_UPDATES} ) \
-           && ( ${PERFORM_UPDATES^} == "Y" )) \
+   || ( ! -z ${PERFORM_UPDATES} ) \
    ]]; then
 
     # If symbolic links exist, remove them.
@@ -119,9 +145,37 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
 
 fi
 
-# FIXME: If needed, update database.
+# If needed, add senzing-environment.py.
 
-# FIXME: If needed, update Senzing configuration
+SENZING_ENVIRONMENT_FILENAME=${SENZING_DOCKER_BIN_DIR}/senzing-environment.py
+
+if [[ ( ! -e ${SENZING_ENVIRONMENT_FILENAME} ) \
+   && ( ! -z ${PYTHON3_INSTALLED} ) \
+   ]]; then
+
+    if [ ! -d ${SENZING_DOCKER_BIN_DIR} ]; then
+        mkdir -p ${SENZING_DOCKER_BIN_DIR}
+    fi
+
+    curl -X GET \
+        --output ${SENZING_ENVIRONMENT_FILENAME} \
+        https://raw.githubusercontent.com/Senzing/senzing-environment/master/senzing-environment.py
+
+    chmod +x ${SENZING_ENVIRONMENT_FILENAME}
+
+fi
+
+# If needed, populate docker-bin directory.
+
+DOCKER_ENVIRONMENT_VARS_FILENAME=${SENZING_DOCKER_BIN_DIR}/docker-environment-vars.sh
+
+if [[ ( ! -e ${DOCKER_ENVIRONMENT_VARS_FILENAME} ) \
+   && ( ! -z ${PYTHON3_INSTALLED} ) \
+   ]]; then
+
+   ${SENZING_ENVIRONMENT_FILENAME} ${SENZING_ENVIRONMENT_SUBCOMMAND} --project-dir ${SENZING_PROJECT_DIR} > /dev/null 2>&1
+
+fi
 
 # If needed, initialize etc and var directories.
 
@@ -138,6 +192,24 @@ if [ ! -e ${SENZING_ETC_DIR} ]; then
       senzing/init-container:latest > /dev/null 2>&1
 
     sudo chown -R $(id -u):$(id -g) ${SENZING_PROJECT_DIR_REALPATH}
+
+fi
+
+# If needed, update Senzing configuration.
+
+if [[ ( ! -z ${PERFORM_UPDATES} ) \
+   ]]; then
+
+    echo "FIXME: If needed, update database"
+
+fi
+
+# If needed, update Senzing configuration.
+
+if [[ ( ! -z ${PERFORM_UPDATES} ) \
+   ]]; then
+
+    echo "FIXME: If needed, update Senzing configuration"
 
 fi
 
