@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -x
+
 # Usage / help.
 
 USAGE="Bring up Senzing web application.

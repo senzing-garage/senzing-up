@@ -51,13 +51,16 @@ The following software programs need to be installed:
 ### Download
 
 1. Get a local copy of
-   [senzing-up.sh](senzing-up.sh).
+   [senzing-up.sh](senzing-up.sh)
+   and make executable.
    Example:
 
     ```console
     curl -X GET \
       --output ~/senzing-up.sh \
       https://raw.githubusercontent.com/Senzing/senzing-up/master/senzing-up.sh
+
+    chmod +x ~/senzing-up.sh
     ```
 
 ### Run command
