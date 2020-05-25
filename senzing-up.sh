@@ -97,9 +97,10 @@ echo ""
 # Prompt user.
 
 read -t 30 -p "Would you like to detect and install updates?  [y|N] " UPDATES_RESPONSE
-if [ ! -z ${UPDATES_RESPONSE} ] && [ ${UPDATES_RESPONSE^} == "Y" ]; then
-    PERFORM_UPDATES=1
-fi
+case ${UPDATES_RESPONSE} in
+    [Yy]* ) PERFORM_UPDATES=1;;
+    * ) ;;
+esac
 echo ""
 
 # Tricky code.  Simply prompting user for sudo access.
@@ -295,6 +296,7 @@ fi
 # Run web-app
 
 echo "${SENZING_PROJECT_NAME}-quickstart running on http://localhost:8251"
+echo "To exit, CTRL-C"
 
 sudo docker run \
     --name ${SENZING_PROJECT_NAME}-quickstart \
