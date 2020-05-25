@@ -37,6 +37,12 @@ if [ ! -n "$(command -v docker)" ]; then
     exit 1
 fi
 
+if [ ! -n "$(command -v realpath)" ]; then
+    echo "ERROR: realpath is required."
+    echo "See https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-realpath.md"
+    exit 1
+fi
+
 if [ -n "$(command -v python3)" ]; then
     PYTHON3_INSTALLED=1
 else
