@@ -25,7 +25,6 @@ find_realpath() {
   cd "$OURPWD"
   echo "$REALPATH"
 }
-realpath "$@"
 
 # -----------------------------------------------------------------------------
 # Main
@@ -105,6 +104,7 @@ echo ""
 
 # Tricky code.  Simply prompting user for sudo access.
 
+echo "To run Docker, you will be prompted for your sudo password."
 sudo ls > /dev/null 2>&1
 
 # If requested, perform updates.
@@ -144,22 +144,22 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
 
     # Download Senzing binaries.
 
-    sudo docker run \
-      --interactive \
-      --name ${SENZING_PROJECT_NAME}-yum \
-      --rm \
-      --tty \
-      --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
-      senzing/yum:latest
+#    sudo docker run \
+#      --interactive \
+#      --name ${SENZING_PROJECT_NAME}-yum \
+#      --rm \
+#      --tty \
+#      --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
+#      senzing/yum:latest
 
 # DEBUG: local install.
-#    sudo docker run \
-#        --env SENZING_ACCEPT_EULA=I_ACCEPT_THE_SENZING_EULA \
-#        --name ${SENZING_PROJECT_NAME}-yum \
-#        --rm \
-#        --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
-#        --volume ~/Downloads:/data \
-#        senzing/yum -y localinstall /data/senzingapi-1.15.0-20106.x86_64.rpm /data/senzingdata-v1-1.0.0-19287.x86_64.rpm
+    sudo docker run \
+        --env SENZING_ACCEPT_EULA=I_ACCEPT_THE_SENZING_EULA \
+        --name ${SENZING_PROJECT_NAME}-yum \
+        --rm \
+        --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
+        --volume ~/Downloads:/data \
+        senzing/yum -y localinstall /data/senzingapi-1.15.0-20106.x86_64.rpm /data/senzingdata-v1-1.0.0-19287.x86_64.rpm
 
     sudo chown -R $(id -u):$(id -g) ${SENZING_PROJECT_DIR_REALPATH}
 
@@ -235,7 +235,7 @@ if [ ! -e ${SENZING_ETC_DIR} ]; then
         --volume ${SENZING_ETC_DIR}:/etc/opt/senzing \
         --volume ${SENZING_G2_DIR}:/opt/senzing/g2 \
         --volume ${SENZING_VAR_DIR}:/var/opt/senzing \
-        senzing/init-container:latest > /dev/null 2>&1
+        senzing/init-container:latest
 
     sudo chown -R $(id -u):$(id -g) ${SENZING_PROJECT_DIR_REALPATH}
 
