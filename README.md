@@ -70,7 +70,7 @@ The following software programs need to be installed:
 
     1. Command format: **`senzing-up.sh <project-directory>`**
 
-   In this example, the Senzing instance will be put into the `~/my-first-senzing-test` folder.
+   In this example, the Senzing instance will be put into the `~/my-first-senzing-test` project directory.
    Example:
 
    ```console
