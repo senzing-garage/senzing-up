@@ -26,6 +26,13 @@ find_realpath() {
   echo "$REALPATH"
 }
 
+perform_docker_pulls() {
+    docker pull senzing/init-container:latest
+    docker pull senzing/senzing-debug:latest
+    docker pull senzing/web-app-demo:latest
+    docker pull senzing/yum:latest
+}
+
 # -----------------------------------------------------------------------------
 # Main
 # -----------------------------------------------------------------------------
@@ -110,16 +117,14 @@ sudo ls > /dev/null 2>&1
 # If requested, perform updates.
 
 if [ ! -z ${PERFORM_UPDATES} ]; then
-    docker pull senzing/init-container:latest
-    docker pull senzing/senzing-debug:latest
-    docker pull senzing/web-app-demo:latest
-    docker pull senzing/yum:latest
+    perform_docker_pulls
 fi
 
 # If the project directory doesn't exist, create it.
 
 if [ ! -d ${SENZING_PROJECT_DIR} ]; then
     mkdir -p ${SENZING_PROJECT_DIR}
+    perform_docker_pulls
 fi
 
 # If new project or update requested, install/update Senzing.
