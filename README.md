@@ -68,11 +68,7 @@ The following software programs need to be installed:
 
 1. Run the command.
 
-   **Format:**
-
-   ```console
-   senzing-up.sh <project-directory>
-   ```
+    1. Format: **senzing-up.sh <project-directory>**
 
    In this example, the Senzing instance will be put into the `~/my-first-senzing-test` folder.
    Example:
