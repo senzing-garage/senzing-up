@@ -27,10 +27,13 @@ find_realpath() {
 }
 
 perform_docker_pulls() {
-    docker pull senzing/init-container:latest
-    docker pull senzing/senzing-debug:latest
-    docker pull senzing/web-app-demo:latest
-    docker pull senzing/yum:latest
+    echo "Pulling Docker images."
+
+    docker pull senzing/g2loader:latest > /dev/null 2>&1
+    docker pull senzing/init-container:latest > /dev/null 2>&1
+    docker pull senzing/senzing-debug:latest > /dev/null 2>&1
+    docker pull senzing/web-app-demo:latest > /dev/null 2>&1
+    docker pull senzing/yum:latest > /dev/null 2>&1
 }
 
 # -----------------------------------------------------------------------------
@@ -73,6 +76,9 @@ fi
 # Configuration via environment variables.
 
 SENZING_ENVIRONMENT_SUBCOMMAND=${SENZING_ENVIRONMENT_SUBCOMMAND:-"add-docker-support-macos"}
+TRUTH_SET_1_DATA_SOURCE_NAME=${TRUTH_SET_1_DATA_SOURCE_NAME:-"customer"}
+TRUTH_SET_2_DATA_SOURCE_NAME=${TRUTH_SET_2_DATA_SOURCE_NAME:-"watchlist"}
+WEB_APP_PORT=8251
 
 # Synthesize variables.
 
@@ -85,13 +91,9 @@ SENZING_ETC_DIR=${SENZING_PROJECT_DIR_REALPATH}/docker-etc
 SENZING_G2_DIR=${SENZING_PROJECT_DIR_REALPATH}/g2
 SENZING_PROJECT_NAME=$(basename "${SENZING_PROJECT_DIR_REALPATH}")
 SENZING_VAR_DIR=${SENZING_PROJECT_DIR_REALPATH}/var
+HORIZONTAL_RULE="=============================================================================="
 
-# Give user information.
-
-echo "Project location: ${SENZING_PROJECT_DIR_REALPATH}"
-echo ""
-
-# DEBUG: Print exports of environment variables.
+# DEBUG: For debugging: print exports of environment variables.
 # echo "export SENZING_DATA_DIR=${SENZING_DATA_DIR}"
 # echo "export SENZING_DOCKER_BIN_DIR=${SENZING_DOCKER_BIN_DIR}"
 # echo "export SENZING_ETC_DIR=${SENZING_ETC_DIR}"
@@ -100,19 +102,30 @@ echo ""
 # echo "export SENZING_PROJECT_NAME=${SENZING_PROJECT_NAME}"
 # echo "export SENZING_VAR_DIR=${SENZING_VAR_DIR}"
 
-# Prompt user.
-
-read -t 30 -p "Would you like to detect and install updates?  [y|N] " UPDATES_RESPONSE
-case ${UPDATES_RESPONSE} in
-    [Yy]* ) PERFORM_UPDATES=1;;
-    * ) ;;
-esac
-echo ""
-
 # Tricky code.  Simply prompting user for sudo access.
 
 echo "To run Docker, you may be prompted for your sudo password."
 sudo ls > /dev/null 2>&1
+
+# If the project directory doesn't exist, create it.
+
+if [ ! -d ${SENZING_PROJECT_DIR} ]; then
+    mkdir -p ${SENZING_PROJECT_DIR}
+    FIRST_TIME_INSTALL=1
+    perform_docker_pulls
+
+# If directory exists, ask if an update is desired.
+# If someone is doing a demo, they shouldn't have to wait for an update.
+
+else
+
+    read -t 30 -p "Would you like to detect and install updates?  [y|N] " UPDATES_RESPONSE
+    case ${UPDATES_RESPONSE} in
+        [Yy]* ) PERFORM_UPDATES=1;;
+        * ) ;;
+    esac
+    echo ""
+fi
 
 # If requested, perform updates.
 
@@ -120,18 +133,17 @@ if [ ! -z ${PERFORM_UPDATES} ]; then
     perform_docker_pulls
 fi
 
-# If the project directory doesn't exist, create it.
-
-if [ ! -d ${SENZING_PROJECT_DIR} ]; then
-    mkdir -p ${SENZING_PROJECT_DIR}
-    perform_docker_pulls
-fi
+# FIXME: Compoare publicly available Senzing version with installed version.
 
 # If new project or update requested, install/update Senzing.
 
 if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
    || ( ! -z ${PERFORM_UPDATES} ) \
    ]]; then
+
+    echo "Installing Senzing."
+
+    # FIXME: Determine version of Senzing being installed as directory suffix.
 
     TIMESTAMP=$(date +%s)
 
@@ -148,22 +160,23 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
 
     # Download Senzing binaries.
 
-    sudo docker run \
-      --interactive \
-      --name ${SENZING_PROJECT_NAME}-yum \
-      --rm \
-      --tty \
-      --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
-      senzing/yum:latest
+#    sudo docker run \
+#      --env SENZING_ACCEPT_EULA=${SENZING_ACCEPT_EULA} \
+#      --interactive \
+#      --name ${SENZING_PROJECT_NAME}-yum \
+#      --rm \
+#      --tty \
+#      --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
+#      senzing/yum:latest
 
 # DEBUG: local install.
-#    sudo docker run \
-#        --env SENZING_ACCEPT_EULA=I_ACCEPT_THE_SENZING_EULA \
-#        --name ${SENZING_PROJECT_NAME}-yum \
-#        --rm \
-#        --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
-#        --volume ~/Downloads:/data \
-#        senzing/yum -y localinstall /data/senzingapi-1.15.0-20106.x86_64.rpm /data/senzingdata-v1-1.0.0-19287.x86_64.rpm
+    sudo docker run \
+        --env SENZING_ACCEPT_EULA=I_ACCEPT_THE_SENZING_EULA \
+        --name ${SENZING_PROJECT_NAME}-yum \
+        --rm \
+        --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
+        --volume ~/Downloads:/data \
+        senzing/yum -y localinstall /data/senzingapi-1.15.0-20106.x86_64.rpm /data/senzingdata-v1-1.0.0-19287.x86_64.rpm
 
     sudo chown -R $(id -u):$(id -g) ${SENZING_PROJECT_DIR_REALPATH}
 
@@ -175,7 +188,8 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
     if [ -e ${SENZING_G2_DIR} ]; then
         mv g2 g2.${TIMESTAMP}
         ln -s g2.${TIMESTAMP} g2
-        rm ${SENZING_G2_DIR}-bak-${TIMESTAMP}
+        rm ${SENZING_G2_DIR}-bak-${TIMESTAMP} > /dev/null 2>&1
+
     else
         mv ${SENZING_G2_DIR}-bak-${TIMESTAMP} ${SENZING_G2_DIR}
     fi
@@ -185,7 +199,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
         mv data-backup/1.0.0 data.${TIMESTAMP}
         rmdir data-backup
         ln -s data.${TIMESTAMP} data
-        rm ${SENZING_DATA_DIR}-bak-${TIMESTAMP}
+        rm ${SENZING_DATA_DIR}-bak-${TIMESTAMP} > /dev/null 2>&1
     else
         mv ${SENZING_DATA_DIR}-bak-${TIMESTAMP} ${SENZING_DATA_DIR}
     fi
@@ -273,6 +287,12 @@ if [[ ( ! -z ${PERFORM_UPDATES} ) ]]; then
 
     echo "Updating Senzing configuration."
 
+    # Remove obsolete GTC files.
+
+    rm /opt/senzing/g2/resources/config/g2core-config-upgrade-1.9-to-1.10.gtc
+
+    # Apply all G2C files in alphabetical order.
+
     for FULL_PATHNAME in ${SENZING_G2_DIR}/resources/config/*; do
         FILENAME=$(basename ${FULL_PATHNAME})
 
@@ -299,14 +319,90 @@ if [[ ( ! -z ${PERFORM_UPDATES} ) ]]; then
 
 fi
 
-# Run web-app.
+# Load Senzing Model with sample data.
 
-echo "${SENZING_PROJECT_NAME}-quickstart running on http://localhost:8251"
+if [[ ( ! -z ${FIRST_TIME_INSTALL} ) ]]; then
+    echo "Loading sample data."
+
+    # Download sample data files.
+
+    curl -X GET \
+        --output ${SENZING_VAR_DIR}/truthset-person-v1-set1.csv \
+        https://public-read-access.s3.amazonaws.com/TestDataSets/SenzingTruthSet/truthset-person-v1-set1.csv \
+        > /dev/null 2>&1
+
+
+    curl -X GET \
+        --output ${SENZING_VAR_DIR}/truthset-person-v1-set2.csv \
+        https://public-read-access.s3.amazonaws.com/TestDataSets/SenzingTruthSet/truthset-person-v1-set2.csv \
+        > /dev/null 2>&1
+
+    # Create file:  sample-data-project.csv
+
+    cat <<EOT > ${SENZING_VAR_DIR}/sample-data-project.csv
+DATA_SOURCE,FILE_FORMAT,FILE_NAME
+${TRUTH_SET_1_DATA_SOURCE_NAME},CSV,/var/opt/senzing/truthset-person-v1-set1.csv
+${TRUTH_SET_2_DATA_SOURCE_NAME},CSV,/var/opt/senzing/truthset-person-v1-set2.csv
+EOT
+
+    # Create file:  sample-data-project.ini
+
+    cat <<EOT > ${SENZING_VAR_DIR}/sample-data-project.ini
+[g2]
+G2Connection=sqlite3://na:na@/var/opt/senzing/sqlite/G2C.db
+iniPath=/etc/opt/senzing/G2Module.ini
+collapsedTableSchema=Y
+evalQueueProcessing=1
+
+[project]
+projectFileName=/var/opt/senzing/sample-data-project.csv
+
+[transport]
+numThreads=4
+
+[report]
+sqlCommitSize=1000
+reportCategoryLimit=1000
+EOT
+
+    # Invoke G2Loader.py via Docker container to load files into Senzing Model.
+
+    sudo docker run \
+        --name ${SENZING_PROJECT_NAME}-g2loader \
+        --rm \
+        --user $(id -u):$(id -g) \
+        --volume ${SENZING_DATA_DIR}:/opt/senzing/data \
+        --volume ${SENZING_ETC_DIR}:/etc/opt/senzing \
+        --volume ${SENZING_G2_DIR}:/opt/senzing/g2 \
+        --volume ${SENZING_VAR_DIR}:/var/opt/senzing \
+        senzing/g2loader:latest \
+            -c /var/opt/senzing/sample-data-project.ini \
+            -p /var/opt/senzing/sample-data-project.csv \
+        > /dev/null 2>&1
+
+fi
+
+# Give user information before Docker container runs.
+
+echo ""
+echo "${HORIZONTAL_RULE}"
+echo "${HORIZONTAL_RULE:0:2} Project location: ${SENZING_PROJECT_DIR_REALPATH}"
+echo "${HORIZONTAL_RULE:0:2} ${SENZING_PROJECT_NAME}-quickstart running on http://localhost:${WEB_APP_PORT}"
+
+if [[ ( ! -z ${FIRST_TIME_INSTALL} ) ]]; then
+    echo "${HORIZONTAL_RULE:0:2} For tour of sample data, see https://senzing.zendesk.com/hc/en-us/articles/360047940434-Synthetic-Truth-Sets"
+fi
+
+echo "${HORIZONTAL_RULE}"
+echo ""
 echo "To exit, CTRL-C"
+echo ""
+
+# Run web-app Docker container.
 
 sudo docker run \
     --name ${SENZING_PROJECT_NAME}-quickstart \
-    --publish 8251:8251 \
+    --publish ${WEB_APP_PORT}:8251 \
     --rm \
     --user $(id -u):$(id -g) \
     --volume ${SENZING_DATA_DIR}:/opt/senzing/data \

@@ -9,7 +9,7 @@ For the most part, instructions are copy and paste.
 Whenever thinking is needed, it's marked with a "thinking" icon :thinking:.
 Whenever customization is needed, it's marked with a "pencil" icon :pencil2:.
 If the instructions are not clear, please let us know by opening a new
-[Documentation issue](https://github.com/Senzing/senzing-environment/issues/new?template=documentation_request.md)
+[Documentation issue](https://github.com/Senzing/senzing-up/issues/new?template=documentation_request.md)
 describing where we can improve.   Now on with the show...
 
 ## Overview
@@ -80,6 +80,9 @@ The following software programs need to be installed:
 ### View web application
 
 1. Visit [http://localhost:8251](http://localhost:8251).
+
+1. For a tour of sample data, visit
+   [Synthetic Truth Sets](https://senzing.zendesk.com/hc/en-us/articles/360047940434-Synthetic-Truth-Sets).
 
 ## Errors
 
