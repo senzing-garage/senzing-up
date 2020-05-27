@@ -299,7 +299,7 @@ if [[ ( ! -z ${PERFORM_UPDATES} ) ]]; then
 
 fi
 
-# Run web-app
+# Run web-app.
 
 echo "${SENZING_PROJECT_NAME}-quickstart running on http://localhost:8251"
 echo "To exit, CTRL-C"
@@ -314,3 +314,5 @@ sudo docker run \
     --volume ${SENZING_G2_DIR}:/opt/senzing/g2 \
     --volume ${SENZING_VAR_DIR}:/var/opt/senzing \
     senzing/web-app-demo:latest > /dev/null 2>&1
+
+echo "Done."
