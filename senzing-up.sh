@@ -144,7 +144,9 @@ else
     echo ""
 fi
 
-# If first time or requested, perform updates.
+# If first time or requested,
+#  - Prompt for EULA acceptance.
+#  - Perform updates.
 
 if [[ ( ! -z ${FIRST_TIME_INSTALL} ) \
    || ( ! -z ${PERFORM_UPDATES} ) \
@@ -179,7 +181,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
         echo "Determining if a new version of Senzing exists."
     fi
 
-    # Determine version of senzingapi.
+    # Determine version of senzingapi on public repository.
 
     sudo docker run \
       --rm \
@@ -189,7 +191,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
     SENZING_G2_DIR_CURRENT=${SENZING_G2_DIR}-${SENZING_G2_CURRENT_VERSION}
     rm ${SENZING_PROJECT_DIR}/yum-list-senzingapi.txt
 
-    # Determine version of senzingdata.
+    # Determine version of senzingdata on public repository.
 
     sudo docker run \
       --rm \
@@ -204,8 +206,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
     if [[ ( ! -e ${SENZING_G2_DIR_CURRENT} ) ]]; then
 
         echo "Installing SenzingApi ${SENZING_G2_CURRENT_VERSION}"
-        echo -ne '...this will take time.\r'
-
+        echo -ne '...this will take time. Depending on network speeds, up to and beyond 15 minutes.\r'
 
         # If symbolic links exist, move them.
         # If successful, they will be removed later.
@@ -223,22 +224,22 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
 
         # Download Senzing binaries.
 
-#        sudo docker run \
-#          --env SENZING_ACCEPT_EULA=${SENZING_ACCEPT_EULA} \
-#          --rm \
-#          --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
-#          senzing/yum:latest \
-#          > /dev/null 2>&1
+        sudo docker run \
+          --env SENZING_ACCEPT_EULA=${SENZING_ACCEPT_EULA} \
+          --rm \
+          --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
+          senzing/yum:latest \
+          > /dev/null 2>&1
 
         # DEBUG: local install.
 
-        sudo docker run \
-            --env SENZING_ACCEPT_EULA=${SENZING_ACCEPT_EULA} \
-            --rm \
-            --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
-            --volume ~/Downloads:/data \
-            senzing/yum -y localinstall /data/senzingapi-1.15.0-20106.x86_64.rpm /data/senzingdata-v1-1.0.0-19287.x86_64.rpm \
-            > /dev/null 2>&1
+#        sudo docker run \
+#            --env SENZING_ACCEPT_EULA=${SENZING_ACCEPT_EULA} \
+#            --rm \
+#            --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
+#            --volume ~/Downloads:/data \
+#            senzing/yum -y localinstall /data/senzingapi-1.15.0-20106.x86_64.rpm /data/senzingdata-v1-1.0.0-19287.x86_64.rpm \
+#            > /dev/null 2>&1
 
         sudo chown -R $(id -u):$(id -g) ${SENZING_PROJECT_DIR_REALPATH}
 
@@ -298,7 +299,7 @@ if [[ ( ! -e ${DOCKER_ENVIRONMENT_VARS_FILENAME} ) ]]; then
 
     fi
 
-    # Populate docker-bin directory.
+    # Populate docker-bin and docker-etc directories.
 
     if [ ! -z ${PYTHON3_INSTALLED} ]; then
         ${SENZING_ENVIRONMENT_FILENAME} ${SENZING_ENVIRONMENT_SUBCOMMAND} --project-dir ${SENZING_PROJECT_DIR} > /dev/null 2>&1
