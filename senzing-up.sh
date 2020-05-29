@@ -33,15 +33,15 @@ find_realpath() {
 perform_docker_pulls() {
     echo "Pulling Docker images."
 
-    docker pull senzing/g2loader:latest > /dev/null 2>&1
+    docker pull senzing/g2loader:latest >> ${SENZING_HISTORY_FILE} 2>&1
     echo -ne 'Pulling ...\r'
-    docker pull senzing/init-container:latest > /dev/null 2>&1
+    docker pull senzing/init-container:latest >> ${SENZING_HISTORY_FILE} 2>&1
     echo -ne 'Pulling ......\r'
-    docker pull senzing/senzing-debug:latest > /dev/null 2>&1
+    docker pull senzing/senzing-debug:latest >> ${SENZING_HISTORY_FILE} 2>&1
     echo -ne 'Pulling .........\r'
-    docker pull senzing/web-app-demo:latest > /dev/null 2>&1
+    docker pull senzing/web-app-demo:latest >> ${SENZING_HISTORY_FILE} 2>&1
     echo -ne 'Pulling ............\r'
-    docker pull senzing/yum:latest > /dev/null 2>&1
+    docker pull senzing/yum:latest >> ${SENZING_HISTORY_FILE} 2>&1
     echo -ne 'Pulling ...............\r'
 }
 
@@ -84,7 +84,7 @@ fi
 
 # Determine if Docker is running.
 
-docker info > /dev/null 2>&1
+sudo docker info  >> ${SENZING_HISTORY_FILE} 2>&1
 DOCKER_RETURN_CODE=$?
 if [  "${DOCKER_RETURN_CODE}" != "0" ]; then
     echo "ERROR: Docker is not running."
@@ -108,6 +108,7 @@ SENZING_DATA_DIR=${SENZING_PROJECT_DIR_REALPATH}/data
 SENZING_DOCKER_BIN_DIR=${SENZING_PROJECT_DIR_REALPATH}/docker-bin
 SENZING_ETC_DIR=${SENZING_PROJECT_DIR_REALPATH}/docker-etc
 SENZING_G2_DIR=${SENZING_PROJECT_DIR_REALPATH}/g2
+SENZING_HISTORY_FILE=${SENZING_PROJECT_DIR_REALPATH}/.senzing/history.log
 SENZING_PROJECT_NAME=$(basename "${SENZING_PROJECT_DIR_REALPATH}")
 SENZING_VAR_DIR=${SENZING_PROJECT_DIR_REALPATH}/var
 HORIZONTAL_RULE="=============================================================================="
@@ -167,7 +168,7 @@ fi
 # First time install instructions.
 
 if [[ ( ! -z ${FIRST_TIME_INSTALL} ) ]]; then
-    mkdir -p ${SENZING_PROJECT_DIR}
+    mkdir -p ${SENZING_PROJECT_DIR}/.senzing
 fi
 
 # If new project or update requested, install/update Senzing.
@@ -229,7 +230,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
           --rm \
           --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
           senzing/yum:latest \
-          > /dev/null 2>&1
+          >> ${SENZING_HISTORY_FILE} 2>&1
 
         # DEBUG: local install.
 
@@ -239,21 +240,22 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
 #            --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
 #            --volume ~/Downloads:/data \
 #            senzing/yum -y localinstall /data/senzingapi-1.15.0-20106.x86_64.rpm /data/senzingdata-v1-1.0.0-19287.x86_64.rpm \
-#            > /dev/null 2>&1
+#         >> ${SENZING_HISTORY_FILE} 2>&1
 
         sudo chown -R $(id -u):$(id -g) ${SENZING_PROJECT_DIR_REALPATH}
 
         # Create symbolic links to versioned directories.
         # Tricky code: Also accounting for a failed/cancelled YUM install.
 
-        pushd ${SENZING_PROJECT_DIR_REALPATH}  > /dev/null 2>&1
+        pushd ${SENZING_PROJECT_DIR_REALPATH}  >> ${SENZING_HISTORY_FILE} 2>&1
 
         # Move "g2" to "g2-M.m.P" directory and make "g2" symlink.
 
         if [ -e ${SENZING_G2_DIR} ]; then
             mv g2 g2-${SENZING_G2_CURRENT_VERSION}
             ln -s g2-${SENZING_G2_CURRENT_VERSION} g2
-            rm ${SENZING_G2_DIR}-bak-${TIMESTAMP} > /dev/null 2>&1
+            rm ${SENZING_G2_DIR}-bak-${TIMESTAMP} >> ${SENZING_HISTORY_FILE} 2>&1
+
 
         else
             mv ${SENZING_G2_DIR}-bak-${TIMESTAMP} ${SENZING_G2_DIR}
@@ -266,13 +268,15 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
             mv data-backup/1.0.0 data-${SENZING_DATA_CURRENT_VERSION}
             rmdir data-backup
             ln -s data-${SENZING_DATA_CURRENT_VERSION} data
-            rm ${SENZING_DATA_DIR}-bak-${TIMESTAMP} > /dev/null 2>&1
+            rm ${SENZING_DATA_DIR}-bak-${TIMESTAMP} >> ${SENZING_HISTORY_FILE} 2>&1
+
         else
             rm -rf ${SENZING_DATA_DIR}
             mv ${SENZING_DATA_DIR}-bak-${TIMESTAMP} ${SENZING_DATA_DIR}
         fi
 
-        popd > /dev/null 2>&1
+        popd >> ${SENZING_HISTORY_FILE} 2>&1
+
 
     fi # if [[ ( ! -e ${SENZING_G2_DIR_CURRENT} ) ]]; then
 
@@ -293,7 +297,7 @@ if [[ ( ! -e ${DOCKER_ENVIRONMENT_VARS_FILENAME} ) ]]; then
         curl -X GET \
             --output ${SENZING_ENVIRONMENT_FILENAME} \
             https://raw.githubusercontent.com/Senzing/senzing-environment/master/senzing-environment.py \
-            > /dev/null 2>&1
+            >> ${SENZING_HISTORY_FILE} 2>&1
 
         chmod +x ${SENZING_ENVIRONMENT_FILENAME}
 
@@ -302,7 +306,7 @@ if [[ ( ! -e ${DOCKER_ENVIRONMENT_VARS_FILENAME} ) ]]; then
     # Populate docker-bin and docker-etc directories.
 
     if [ ! -z ${PYTHON3_INSTALLED} ]; then
-        ${SENZING_ENVIRONMENT_FILENAME} ${SENZING_ENVIRONMENT_SUBCOMMAND} --project-dir ${SENZING_PROJECT_DIR} > /dev/null 2>&1
+        ${SENZING_ENVIRONMENT_FILENAME} ${SENZING_ENVIRONMENT_SUBCOMMAND} --project-dir ${SENZING_PROJECT_DIR} >> ${SENZING_HISTORY_FILE} 2>&1
     fi
 
     if [ ! -d ${SENZING_DOCKER_BIN_DIR} ]; then
@@ -327,7 +331,7 @@ if [ ! -e ${SENZING_ETC_DIR} ]; then
         --volume ${SENZING_ETC_DIR}:/etc/opt/senzing \
         --volume ${SENZING_G2_DIR}:/opt/senzing/g2 \
         --volume ${SENZING_VAR_DIR}:/var/opt/senzing \
-        senzing/init-container:latest > /dev/null 2>&1
+        senzing/init-container:latest >> ${SENZING_HISTORY_FILE} 2>&1
 
     sudo chown -R $(id -u):$(id -g) ${SENZING_PROJECT_DIR_REALPATH}
 
@@ -350,7 +354,7 @@ if [[ ( ! -z ${PERFORM_UPDATES} ) ]]; then
             /opt/senzing/g2/bin/g2dbupgrade \
                 -c /etc/opt/senzing/G2Module.ini \
                 -a \
-            > /dev/null 2>&1
+            >> ${SENZING_HISTORY_FILE} 2>&1
 
 fi
 
@@ -382,7 +386,7 @@ if [[ ( ! -z ${PERFORM_UPDATES} ) ]]; then
                 /opt/senzing/g2/python/G2ConfigTool.py \
                     -c /etc/opt/senzing/G2Module.ini \
                     -f /opt/senzing/g2/resources/config/${FILENAME} \
-                > /dev/null 2>&1
+                >> ${SENZING_HISTORY_FILE} 2>&1
 
         RETURN_CODE=$?
 
@@ -401,13 +405,13 @@ if [[ ( ! -z ${FIRST_TIME_INSTALL} ) ]]; then
     curl -X GET \
         --output ${SENZING_VAR_DIR}/truthset-person-v1-set1.csv \
         https://public-read-access.s3.amazonaws.com/TestDataSets/SenzingTruthSet/truthset-person-v1-set1.csv \
-        > /dev/null 2>&1
+        >> ${SENZING_HISTORY_FILE} 2>&1
 
 
     curl -X GET \
         --output ${SENZING_VAR_DIR}/truthset-person-v1-set2.csv \
         https://public-read-access.s3.amazonaws.com/TestDataSets/SenzingTruthSet/truthset-person-v1-set2.csv \
-        > /dev/null 2>&1
+        >> ${SENZING_HISTORY_FILE} 2>&1
 
     # Create file:  sample-data-project.csv
 
@@ -449,7 +453,7 @@ EOT
         senzing/g2loader:latest \
             -c /var/opt/senzing/sample-data-project.ini \
             -p /var/opt/senzing/sample-data-project.csv \
-        > /dev/null 2>&1
+        >> ${SENZING_HISTORY_FILE} 2>&1
 
 fi
 
@@ -486,6 +490,6 @@ sudo docker run \
     --volume ${SENZING_G2_DIR}:/opt/senzing/g2 \
     --volume ${SENZING_VAR_DIR}:/var/opt/senzing \
     senzing/web-app-demo:latest \
-    > /dev/null 2>&1
+    >> ${SENZING_HISTORY_FILE} 2>&1
 
 echo "Done."
