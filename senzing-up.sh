@@ -67,7 +67,7 @@ fi
 
 # Determine if Docker is running.
 
-sudo -p "To run Docker, please enter sudo password:  " docker info >> /dev/null 2>&1
+sudo -p "To run Docker, sudo access is required.  Please enter your password:  " docker info >> /dev/null 2>&1
 DOCKER_RETURN_CODE=$?
 if [  "${DOCKER_RETURN_CODE}" != "0" ]; then
     echo "ERROR: Docker is not running."
@@ -94,7 +94,7 @@ SENZING_G2_DIR=${SENZING_PROJECT_DIR_REALPATH}/g2
 SENZING_HISTORY_FILE=${SENZING_PROJECT_DIR_REALPATH}/.senzing/history.log
 SENZING_PROJECT_NAME=$(basename "${SENZING_PROJECT_DIR_REALPATH}")
 SENZING_VAR_DIR=${SENZING_PROJECT_DIR_REALPATH}/var
-HORIZONTAL_RULE="=============================================================================="
+HORIZONTAL_RULE="================================================================================"
 
 # DEBUG: For debugging: print exports of environment variables.
 # echo "export SENZING_DATA_DIR=${SENZING_DATA_DIR}"
@@ -129,7 +129,8 @@ if [[ ( ! -z ${FIRST_TIME_INSTALL} ) \
    || ( ! -z ${PERFORM_UPDATES} ) \
    ]]; then
 
-    echo "The Senzing end user license agreement can be found at https://senzing.com/end-user-license-agreement/"
+    echo "The Senzing end user license agreement can be found at"
+    echo "http://senzing.com/end-user-license-agreement"
     echo ""
     read -p "Do you accept the license terms and conditions?  [y/N] " EULA_RESPONSE
     case ${EULA_RESPONSE} in
@@ -142,7 +143,7 @@ fi
 # First time install instructions.
 
 if [[ ( ! -z ${FIRST_TIME_INSTALL} ) ]]; then
-    mkdir -p ${SENZING_PROJECT_DIR}/.senzing >> ${SENZING_HISTORY_FILE} 2>&1
+    mkdir -p ${SENZING_PROJECT_DIR}/.senzing
 fi
 
 # Make entry in history log.
@@ -153,13 +154,18 @@ echo "${HORIZONTAL_RULE:0:2} Start time: $(date)" >> ${SENZING_HISTORY_FILE} 2>&
 echo "${HORIZONTAL_RULE}" >> ${SENZING_HISTORY_FILE} 2>&1
 echo "" >> ${SENZING_HISTORY_FILE} 2>&1
 
-echo "To view log, run: tail -f ${SENZING_HISTORY_FILE}"
-
 # If first time or update, pull docker images.
 
 if [[ ( ! -z ${FIRST_TIME_INSTALL} ) \
    || ( ! -z ${PERFORM_UPDATES} ) \
    ]]; then
+
+
+    echo "To view log, run:"
+    echo "tail -f ${SENZING_HISTORY_FILE}"
+    echo ""
+
+    # Pull docker images.
 
     echo "Pulling Docker images."
 
@@ -212,7 +218,9 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
     if [[ ( ! -e ${SENZING_G2_DIR_CURRENT} ) ]]; then
 
         echo "Installing SenzingApi ${SENZING_G2_CURRENT_VERSION}"
-        echo -ne '...this will take time. Depending on network speeds, up to and beyond 15 minutes.\r'
+        echo "Depending on network speeds, this may take up to 15 minutes."
+        echo "To view progress, run:"
+        echo "tail -f ${SENZING_HISTORY_FILE}"
 
         # If symbolic links exist, move them.
         # If successful, they will be removed later.
@@ -230,22 +238,22 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
 
         # Download Senzing binaries.
 
-        sudo docker run \
-          --env SENZING_ACCEPT_EULA=${SENZING_ACCEPT_EULA} \
-          --rm \
-          --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
-          senzing/yum:latest \
-          >> ${SENZING_HISTORY_FILE} 2>&1
+#        sudo docker run \
+#          --env SENZING_ACCEPT_EULA=${SENZING_ACCEPT_EULA} \
+#          --rm \
+#          --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
+#          senzing/yum:latest \
+#          >> ${SENZING_HISTORY_FILE} 2>&1
 
         # DEBUG: local install.
 
-#        sudo docker run \
-#            --env SENZING_ACCEPT_EULA=${SENZING_ACCEPT_EULA} \
-#            --rm \
-#            --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
-#            --volume ~/Downloads:/data \
-#            senzing/yum -y localinstall /data/senzingapi-1.15.0-20106.x86_64.rpm /data/senzingdata-v1-1.0.0-19287.x86_64.rpm \
-#         >> ${SENZING_HISTORY_FILE} 2>&1
+        sudo docker run \
+            --env SENZING_ACCEPT_EULA=${SENZING_ACCEPT_EULA} \
+            --rm \
+            --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
+            --volume ~/Downloads:/data \
+            senzing/yum -y localinstall /data/senzingapi-1.15.0-20106.x86_64.rpm /data/senzingdata-v1-1.0.0-19287.x86_64.rpm \
+         >> ${SENZING_HISTORY_FILE} 2>&1
 
         sudo chown -R $(id -u):$(id -g) ${SENZING_PROJECT_DIR_REALPATH} >> ${SENZING_HISTORY_FILE} 2>&1
 
@@ -342,7 +350,7 @@ if [ ! -e ${SENZING_ETC_DIR} ]; then
 
 fi
 
-# If requested, update Senzing database schema.
+# If requested, update Senzing database schema and configuration.
 
 if [[ ( ! -z ${PERFORM_UPDATES} ) ]]; then
 
@@ -360,12 +368,6 @@ if [[ ( ! -z ${PERFORM_UPDATES} ) ]]; then
                 -c /etc/opt/senzing/G2Module.ini \
                 -a \
             >> ${SENZING_HISTORY_FILE} 2>&1
-
-fi
-
-# If requested, update Senzing configuration.
-
-if [[ ( ! -z ${PERFORM_UPDATES} ) ]]; then
 
     echo "Updating Senzing configuration."
 
@@ -466,35 +468,28 @@ fi
 
 if [[ ( ! -z ${FIRST_TIME_INSTALL} ) ]]; then
     echo "Installation is complete."
-    echo "Installation is complete." >> ${SENZING_HISTORY_FILE} 2>&1
+    echo " $(date) Installation is complete." >> ${SENZING_HISTORY_FILE} 2>&1
 elif [[ ( ! -z ${PERFORM_UPDATES} ) ]]; then
     echo "Update is complete."
-    echo "Update is complete." >> ${SENZING_HISTORY_FILE} 2>&1
+    echo " $(date) Update is complete." >> ${SENZING_HISTORY_FILE} 2>&1
 fi
-
-# Make entry in history log.
-
-echo "" >> ${SENZING_HISTORY_FILE} 2>&1
-echo "${HORIZONTAL_RULE}" >> ${SENZING_HISTORY_FILE} 2>&1
-echo "${HORIZONTAL_RULE:0:2} Stop time: $(date)" >> ${SENZING_HISTORY_FILE} 2>&1
-echo "${HORIZONTAL_RULE}" >> ${SENZING_HISTORY_FILE} 2>&1
-echo "" >> ${SENZING_HISTORY_FILE} 2>&1
 
 # Print epilog in terminal.
 
 echo ""
 echo "${HORIZONTAL_RULE}"
-echo "${HORIZONTAL_RULE:0:2} View: http://localhost:${WEB_APP_PORT}"
+echo "${HORIZONTAL_RULE:0:1} View: http://localhost:${WEB_APP_PORT}"
 
 if [[ ( ! -z ${FIRST_TIME_INSTALL} ) ]]; then
-    echo "${HORIZONTAL_RULE:0:2} For tour of sample data, see https://senzing.zendesk.com/hc/en-us/articles/360047940434-Synthetic-Truth-Sets"
+    echo "${HORIZONTAL_RULE:0:1} For tour of sample data, see:"
+    echo "${HORIZONTAL_RULE:0:1} http://senzing.zendesk.com/hc/en-us/articles/360047940434-Synthetic-Truth-Sets"
 fi
 
-echo "${HORIZONTAL_RULE:0:2} Project location: ${SENZING_PROJECT_DIR_REALPATH}"
+echo "${HORIZONTAL_RULE:0:1} Project location: ${SENZING_PROJECT_DIR_REALPATH}"
 echo "${HORIZONTAL_RULE}"
 echo ""
 echo "The senzing/web-app-demo Docker container is running in this window."
-echo "To stop the container, enter CTRL-C"
+echo "To stop the Docker container, enter CTRL-C"
 echo ""
 
 # Run web-app Docker container.
@@ -510,4 +505,5 @@ sudo docker run \
     senzing/web-app-demo:latest \
     >> ${SENZING_HISTORY_FILE} 2>&1
 
+echo "$(date) Done." >> ${SENZING_HISTORY_FILE} 2>&1
 echo "Done."

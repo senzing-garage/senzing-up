@@ -22,11 +22,43 @@
 
 ### Prerequisite software
 
-The following software programs need to be installed:
+:thinking: The following tasks need to be complete before proceeding.
+These are "one-time tasks" which may already have been completed.
 
-1. [docker](https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-docker.md)
-1. [curl](https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-curl.md)
-1. [python3](https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-python-3.md)
+1. The following software programs need to be installed and running on the workstation:
+    1. [docker](https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-docker.md)
+        1. Verify.
+           Example:
+
+            ```console
+            sudo docker run hello-world
+            ```
+
+        1. :warning: **macOS:** - Verify sufficient resources.
+            1. macOS > Docker desktop > "Preferences..." > "Resources" > "Advanced"
+                1. **CPUs:** 4
+                1. **Memory:** 4 GB
+                1. **Swap:** 1 GB
+                1. **Disk image size:** 60 GB
+            1. Docker desktop > "Preferences..." > "Kubernetes"
+                1. Uncheck "Enable Kubernetes"
+            1. Click "Apply & Restart"
+
+    1. [curl](https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-curl.md)
+        1. Verify.
+           Example:
+
+            ```console
+            curl --version
+            ```
+
+    1. [python3](https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-python-3.md)
+        1. Verify.
+           Example:
+
+            ```console
+            python3 --version
+            ```
 
 ### Download
 
