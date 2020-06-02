@@ -36,6 +36,17 @@ find_realpath() {
 
 SENZING_PROJECT_DIR=$1
 
+# Determine operating system running script.
+
+UNAME_VALUE="$(uname -s)"
+case "${UNAME_VALUE}" in
+    Linux*)     HOST_MACHINE_OS=Linux;;
+    Darwin*)    HOST_MACHINE_OS=Mac;;
+    CYGWIN*)    HOST_MACHINE_OS=Cygwin;;
+    MINGW*)     HOST_MACHINE_OS=MinGw;;
+    *)          HOST_MACHINE_OS="UNKNOWN:${UNAME_VALUE}"
+esac
+
 # Verify input.
 
 if [ -z ${SENZING_PROJECT_DIR} ]; then
@@ -67,13 +78,19 @@ fi
 
 # Determine if Docker is running.
 
-sudo -p "To run Docker, sudo access is required.  Please enter your password:  " docker info >> /dev/null 2>&1
-DOCKER_RETURN_CODE=$?
-if [  "${DOCKER_RETURN_CODE}" != "0" ]; then
-    echo "ERROR: Docker is not running."
-    echo "Please start Docker."
-    exit 1
+if [[ ( ${UNAME_VALUE:0:6} != "CYGWIN" ) ]]; then
+    sudo -p "To run Docker, sudo access is required.  Please enter your password:  " docker info >> /dev/null 2>&1
+    DOCKER_RETURN_CODE=$?
+    if [  "${DOCKER_RETURN_CODE}" != "0" ]; then
+        echo "ERROR: Docker is not running."
+        echo "Please start Docker."
+        exit 1
+    fi
+else
+    echo "To run sudo docker, You may prompted for your password"
 fi
+
+exit
 
 # Configuration via environment variables.
 
@@ -130,7 +147,7 @@ if [[ ( ! -z ${FIRST_TIME_INSTALL} ) \
    ]]; then
 
     echo "The Senzing end user license agreement can be found at"
-    echo "http://senzing.com/end-user-license-agreement"
+    echo "https://senzing.com/end-user-license-agreement"
     echo ""
     read -p "Do you accept the license terms and conditions?  [y/N] " EULA_RESPONSE
     case ${EULA_RESPONSE} in
@@ -153,13 +170,13 @@ echo "${HORIZONTAL_RULE}" >> ${SENZING_HISTORY_FILE} 2>&1
 echo "${HORIZONTAL_RULE:0:2} Start time: $(date)" >> ${SENZING_HISTORY_FILE} 2>&1
 echo "${HORIZONTAL_RULE}" >> ${SENZING_HISTORY_FILE} 2>&1
 echo "" >> ${SENZING_HISTORY_FILE} 2>&1
+echo "Operating system running script: ${HOST_MACHINE_OS}" >> ${SENZING_HISTORY_FILE} 2>&1
 
 # If first time or update, pull docker images.
 
 if [[ ( ! -z ${FIRST_TIME_INSTALL} ) \
    || ( ! -z ${PERFORM_UPDATES} ) \
    ]]; then
-
 
     echo "To view log, run:"
     echo "tail -f ${SENZING_HISTORY_FILE}"
@@ -482,14 +499,15 @@ echo "${HORIZONTAL_RULE:0:1} View: http://localhost:${WEB_APP_PORT}"
 
 if [[ ( ! -z ${FIRST_TIME_INSTALL} ) ]]; then
     echo "${HORIZONTAL_RULE:0:1} For tour of sample data, see:"
-    echo "${HORIZONTAL_RULE:0:1} http://senzing.zendesk.com/hc/en-us/articles/360047940434-Synthetic-Truth-Sets"
+    echo "${HORIZONTAL_RULE:0:1} https://senzing.zendesk.com/hc/en-us/articles/360047940434-Synthetic-Truth-Sets"
 fi
 
 echo "${HORIZONTAL_RULE:0:1} Project location: ${SENZING_PROJECT_DIR_REALPATH}"
 echo "${HORIZONTAL_RULE}"
 echo ""
-echo "The senzing/web-app-demo Docker container is running in this window."
-echo "To stop the Docker container, enter CTRL-C"
+echo "This terminal is running the Senzing Entity Search Web App."
+echo "Do not close nor exit this terminal until the web app is no longer needed."
+echo "To exit, enter CTRL-C"
 echo ""
 
 # Run web-app Docker container.
