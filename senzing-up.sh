@@ -301,20 +301,20 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
 
         # Download Senzing binaries.
 
-#        sudo docker run \
-#          --env SENZING_ACCEPT_EULA=${SENZING_ACCEPT_EULA} \
-#          --rm \
-#          --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
-#          senzing/yum:latest
+        sudo docker run \
+          --env SENZING_ACCEPT_EULA=${SENZING_ACCEPT_EULA} \
+          --rm \
+          --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
+          senzing/yum:latest
 
         # DEBUG: local install.
 
-        sudo docker run \
-            --env SENZING_ACCEPT_EULA=${SENZING_ACCEPT_EULA} \
-            --rm \
-            --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
-            --volume ~/Downloads:/data \
-            senzing/yum -y localinstall /data/senzingapi-1.15.0-20106.x86_64.rpm /data/senzingdata-v1-1.0.0-19287.x86_64.rpm
+#        sudo docker run \
+#            --env SENZING_ACCEPT_EULA=${SENZING_ACCEPT_EULA} \
+#            --rm \
+#            --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
+#            --volume ~/Downloads:/data \
+#            senzing/yum -y localinstall /data/senzingapi-1.15.0-20106.x86_64.rpm /data/senzingdata-v1-1.0.0-19287.x86_64.rpm
 
         sudo chown -R $(id -u):$(id -g) ${SENZING_PROJECT_DIR_REALPATH}
 
