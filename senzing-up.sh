@@ -16,16 +16,49 @@ Where:
 # Given a relative path, find the fully qualified path.
 
 find_realpath() {
-  OURPWD=$PWD
-  cd "$(dirname "$1")"
-  LINK=$(readlink "$(basename "$1")")
-  while [ "$LINK" ]; do
-    cd "$(dirname "$LINK")"
+    OURPWD=$PWD
+    cd "$(dirname "$1")"
     LINK=$(readlink "$(basename "$1")")
-  done
-  REALPATH="$PWD/$(basename "$1")"
-  cd "$OURPWD"
-  echo "$REALPATH"
+    while [ "$LINK" ]; do
+        cd "$(dirname "$LINK")"
+        LINK=$(readlink "$(basename "$1")")
+    done
+    REALPATH="$PWD/$(basename "$1")"
+    cd "$OURPWD"
+    echo "$REALPATH"
+}
+
+# Final instructions given to user.
+
+print_epilog() {
+
+    # Give user information before Docker container runs.
+
+    if [[ ( ! -z ${FIRST_TIME_INSTALL} ) ]]; then
+        echo " $(date) Installation is complete."
+        echo "Installation is complete." > ${TERMINAL_TTY}
+    elif [[ ( ! -z ${PERFORM_UPDATES} ) ]]; then
+        echo " $(date) Update is complete."
+        echo "Update is complete." > ${TERMINAL_TTY}
+    fi
+
+    echo "" > ${TERMINAL_TTY}
+    echo "${HORIZONTAL_RULE}" > ${TERMINAL_TTY}
+    echo "${HORIZONTAL_RULE:0:2} View: http://localhost:${WEB_APP_PORT}" > ${TERMINAL_TTY}
+
+    if [[ ( ! -z ${FIRST_TIME_INSTALL} ) ]]; then
+        echo "${HORIZONTAL_RULE:0:2} For tour of sample data, see:" > ${TERMINAL_TTY}
+        echo "${HORIZONTAL_RULE:0:2} https://senzing.zendesk.com/hc/en-us/articles/360047940434-Synthetic-Truth-Sets" > ${TERMINAL_TTY}
+    fi
+
+    echo "${HORIZONTAL_RULE:0:2} Project location: ${SENZING_PROJECT_DIR_REALPATH}" > ${TERMINAL_TTY}
+    echo "${HORIZONTAL_RULE}" > ${TERMINAL_TTY}
+    echo "" > ${TERMINAL_TTY}
+    echo "This terminal is running the Senzing Entity Search Web App." > ${TERMINAL_TTY}
+    echo "Do not close nor exit this terminal until the web app is no longer needed." > ${TERMINAL_TTY}
+    echo "To exit, enter CTRL-C" > ${TERMINAL_TTY}
+    echo "" > ${TERMINAL_TTY}
+
 }
 
 # -----------------------------------------------------------------------------
@@ -49,7 +82,7 @@ esac
 
 # Verify input.
 
-if [ -z ${SENZING_PROJECT_DIR} ]; then
+if [[ ( -z ${SENZING_PROJECT_DIR} ) ]]; then
     echo "${USAGE}"
     echo "ERROR: Missing project-dir."
     exit 1
@@ -57,19 +90,19 @@ fi
 
 # Verify environment: curl, docker, python3.
 
-if [ ! -n "$(command -v curl)" ]; then
+if [[ ( ! -n "$(command -v curl)" ) ]]; then
     echo "ERROR: curl is required."
     echo "See https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-curl.md"
     exit 1
 fi
 
-if [ ! -n "$(command -v docker)" ]; then
+if [[ ( ! -n "$(command -v docker)" ) ]]; then
     echo "ERROR: docker is required."
     echo "See https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-docker.md"
     exit 1
 fi
 
-if [ -n "$(command -v python3)" ]; then
+if [[ ( -n "$(command -v python3)" ) ]]; then
     PYTHON3_INSTALLED=1
 else
     echo "WARNING: python3 is not installed."
@@ -81,7 +114,7 @@ fi
 if [[ ( ${UNAME_VALUE:0:6} != "CYGWIN" ) ]]; then
     sudo -p "To run Docker, sudo access is required.  Please enter your password:  " docker info >> /dev/null 2>&1
     DOCKER_RETURN_CODE=$?
-    if [  "${DOCKER_RETURN_CODE}" != "0" ]; then
+    if [[ ( "${DOCKER_RETURN_CODE}" != "0" ) ]]; then
         echo "ERROR: Docker is not running."
         echo "Please start Docker."
         exit 1
@@ -102,7 +135,7 @@ WEB_APP_PORT=${SENZING_WEB_APP_PORT:-"8251"}
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null 2>&1 && pwd )"
 SENZING_PROJECT_DIR_REALPATH=$(find_realpath ${SENZING_PROJECT_DIR})
 
-HORIZONTAL_RULE="================================================================================"
+HORIZONTAL_RULE="=================================================================================="
 SENZING_DATA_DIR=${SENZING_PROJECT_DIR_REALPATH}/data
 SENZING_DOCKER_BIN_DIR=${SENZING_PROJECT_DIR_REALPATH}/docker-bin
 SENZING_ETC_DIR=${SENZING_PROJECT_DIR_REALPATH}/docker-etc
@@ -114,7 +147,7 @@ TERMINAL_TTY=/dev/tty
 
 # If project directory doesn't exist, this is a first time installation.
 
-if [ ! -d ${SENZING_PROJECT_DIR} ]; then
+if [[ ( ! -d ${SENZING_PROJECT_DIR} ) ]]; then
     FIRST_TIME_INSTALL=1
 
 # If a project directory does exist, ask if it should be updated.
@@ -150,7 +183,7 @@ if [[ ( ! -z ${FIRST_TIME_INSTALL} ) \
 
     # Ask for log visibility.
 
-    read -p "Show logging?  [y/N] " LOG_RESPONSE
+    read -p "Show logging in this terminal window?  [y/N] " LOG_RESPONSE
     case ${LOG_RESPONSE} in
         [Yy]* ) LOG_TO_TERMINAL=1;;
         * ) ;;
@@ -169,8 +202,12 @@ fi
 if [[ ( ! -z ${LOG_TO_TERMINAL} ) ]]; then
     exec > >(tee -i ${SENZING_HISTORY_FILE})
 else
-    echo "To view log, run:"
-    echo "tail -f ${SENZING_HISTORY_FILE}"
+    if [[ ( ! -z ${FIRST_TIME_INSTALL} ) \
+       || ( ! -z ${PERFORM_UPDATES} ) \
+       ]]; then
+        echo "To view log, run:"
+        echo "tail -f ${SENZING_HISTORY_FILE}"
+    fi
     exec >> ${SENZING_HISTORY_FILE} 2>&1
 fi
 
@@ -214,6 +251,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
    ]]; then
 
     if [[ ( ! -z ${PERFORM_UPDATES} ) ]]; then
+        echo "Performing updates."
         echo "Determining if a new version of Senzing exists."  > ${TERMINAL_TTY}
     fi
 
@@ -253,11 +291,11 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
 
         TIMESTAMP=$(date +%s)
 
-        if [ -e ${SENZING_G2_DIR} ]; then
+        if [[ ( -e ${SENZING_G2_DIR} ) ]]; then
             mv ${SENZING_G2_DIR} ${SENZING_G2_DIR}-bak-${TIMESTAMP}
         fi
 
-        if [ -e ${SENZING_DATA_DIR} ]; then
+        if [[ ( -e ${SENZING_DATA_DIR} ) ]]; then
             mv ${SENZING_DATA_DIR} ${SENZING_DATA_DIR}-bak-${TIMESTAMP}
         fi
 
@@ -287,11 +325,10 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
 
         # Move "g2" to "g2-M.m.P" directory and make "g2" symlink.
 
-        if [ -e ${SENZING_G2_DIR} ]; then
+        if [[ ( -e ${SENZING_G2_DIR} ) ]]; then
             mv g2 g2-${SENZING_G2_CURRENT_VERSION}
             ln -s g2-${SENZING_G2_CURRENT_VERSION} g2
             rm ${SENZING_G2_DIR}-bak-${TIMESTAMP}
-
 
         else
             mv ${SENZING_G2_DIR}-bak-${TIMESTAMP} ${SENZING_G2_DIR}
@@ -312,7 +349,6 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
         fi
 
         popd
-
 
     fi # if [[ ( ! -e ${SENZING_G2_DIR_CURRENT} ) ]]; then
 
@@ -340,11 +376,11 @@ if [[ ( ! -e ${DOCKER_ENVIRONMENT_VARS_FILENAME} ) ]]; then
 
     # Populate docker-bin and docker-etc directories.
 
-    if [ ! -z ${PYTHON3_INSTALLED} ]; then
+    if [[ ( ! -z ${PYTHON3_INSTALLED} ) ]]; then
         ${SENZING_ENVIRONMENT_FILENAME} ${SENZING_ENVIRONMENT_SUBCOMMAND} --project-dir ${SENZING_PROJECT_DIR}
     fi
 
-    if [ ! -d ${SENZING_DOCKER_BIN_DIR} ]; then
+    if [[ ( ! -d ${SENZING_DOCKER_BIN_DIR} ) ]]; then
         mkdir -p ${SENZING_DOCKER_BIN_DIR}
     fi
 
@@ -354,7 +390,7 @@ fi
 
 # If needed, initialize etc and var directories.
 
-if [ ! -e ${SENZING_ETC_DIR} ]; then
+if [[ ( ! -e ${SENZING_ETC_DIR} ) ]]; then
 
     echo "Creating ${SENZING_ETC_DIR}" > ${TERMINAL_TTY}
     echo "Initializing Senzing configuration." > ${TERMINAL_TTY}
@@ -480,39 +516,12 @@ EOT
 
 fi
 
-# Give user information before Docker container runs.
-
-if [[ ( ! -z ${FIRST_TIME_INSTALL} ) ]]; then
-    echo "Installation is complete." > ${TERMINAL_TTY}
-    echo " $(date) Installation is complete."
-elif [[ ( ! -z ${PERFORM_UPDATES} ) ]]; then
-    echo "Update is complete." > ${TERMINAL_TTY}
-    echo " $(date) Update is complete."
-fi
-
-# Print epilog in terminal.
-
-echo "" > ${TERMINAL_TTY}
-echo "${HORIZONTAL_RULE}" > ${TERMINAL_TTY}
-echo "${HORIZONTAL_RULE:0:1} View: http://localhost:${WEB_APP_PORT}" > ${TERMINAL_TTY}
-
-if [[ ( ! -z ${FIRST_TIME_INSTALL} ) ]]; then
-    echo "${HORIZONTAL_RULE:0:1} For tour of sample data, see:" > ${TERMINAL_TTY}
-    echo "${HORIZONTAL_RULE:0:1} https://senzing.zendesk.com/hc/en-us/articles/360047940434-Synthetic-Truth-Sets" > ${TERMINAL_TTY}
-fi
-
-echo "${HORIZONTAL_RULE:0:1} Project location: ${SENZING_PROJECT_DIR_REALPATH}" > ${TERMINAL_TTY}
-echo "${HORIZONTAL_RULE}" > ${TERMINAL_TTY}
-echo "" > ${TERMINAL_TTY}
-echo "This terminal is running the Senzing Entity Search Web App." > ${TERMINAL_TTY}
-echo "Do not close nor exit this terminal until the web app is no longer needed." > ${TERMINAL_TTY}
-echo "To exit, enter CTRL-C" > ${TERMINAL_TTY}
-echo "" > ${TERMINAL_TTY}
-
-# FIXME: Figure out how to print after running docker container.
+# Print epilog.
 
 if [[ ( ! -z ${LOG_TO_TERMINAL} ) ]]; then
-    FIXME:
+    (sleep 30 && print_epilog)&   # Sleep to let Docker container run, then print.
+else
+    print_epilog
 fi
 
 # Run web-app Docker container.
