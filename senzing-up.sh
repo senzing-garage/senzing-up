@@ -129,6 +129,7 @@ SENZING_ENVIRONMENT_SUBCOMMAND=${SENZING_ENVIRONMENT_SUBCOMMAND:-"add-docker-sup
 TRUTH_SET_1_DATA_SOURCE_NAME=${SENZING_TRUTH_SET_1_DATA_SOURCE_NAME:-"customer"}
 TRUTH_SET_2_DATA_SOURCE_NAME=${SENZING_TRUTH_SET_2_DATA_SOURCE_NAME:-"watchlist"}
 WEB_APP_PORT=${SENZING_WEB_APP_PORT:-"8251"}
+API_SERVER_PORT=${SENZING_API_SERVER_PORT:-"8250"}
 
 # Synthesize variables.
 
@@ -527,6 +528,7 @@ fi
 # Run web-app Docker container.
 
 sudo docker run \
+    --publish ${API_SERVER_PORT}:8090 \
     --publish ${WEB_APP_PORT}:8251 \
     --rm \
     --user $(id -u):$(id -g) \
