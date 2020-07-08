@@ -201,7 +201,7 @@ fi
 # Configure log visibility.
 
 if [[ ( ! -z ${LOG_TO_TERMINAL} ) ]]; then
-    exec > >(tee -i ${SENZING_HISTORY_FILE})
+    exec > >(tee -i -a ${SENZING_HISTORY_FILE})
 else
     if [[ ( ! -z ${FIRST_TIME_INSTALL} ) \
        || ( ! -z ${PERFORM_UPDATES} ) \
