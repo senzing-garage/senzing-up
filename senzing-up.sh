@@ -468,8 +468,8 @@ if [[ ( ! -z ${FIRST_TIME_INSTALL} ) ]]; then
 
     cat <<EOT > ${SENZING_VAR_DIR}/truthset-project.csv
 DATA_SOURCE,FILE_FORMAT,FILE_NAME
-${TRUTH_SET_1_DATA_SOURCE_NAME},CSV,/opt/senzing/g2/python/demo/truth/truthset-person-v1-set1.csv
-${TRUTH_SET_2_DATA_SOURCE_NAME},CSV,/opt/senzing/g2/python/demo/truth/truthset-person-v1-set2.csv
+${TRUTH_SET_1_DATA_SOURCE_NAME},CSV,/opt/senzing/g2/python/demo/truth/truthset-person-v1-set1-data.csv
+${TRUTH_SET_2_DATA_SOURCE_NAME},CSV,/opt/senzing/g2/python/demo/truth/truthset-person-v1-set2-data.csv
 EOT
 
     # Create file:  truthset-project.ini
