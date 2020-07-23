@@ -126,8 +126,8 @@ fi
 # Configuration via environment variables.
 
 SENZING_ENVIRONMENT_SUBCOMMAND=${SENZING_ENVIRONMENT_SUBCOMMAND:-"add-docker-support-macos"}
-TRUTH_SET_1_DATA_SOURCE_NAME=${SENZING_TRUTH_SET_1_DATA_SOURCE_NAME:-"customer"}
-TRUTH_SET_2_DATA_SOURCE_NAME=${SENZING_TRUTH_SET_2_DATA_SOURCE_NAME:-"watchlist"}
+TRUTH_SET_1_DATA_SOURCE_NAME=${SENZING_TRUTH_SET_1_DATA_SOURCE_NAME:-"CUSTOMER"}
+TRUTH_SET_2_DATA_SOURCE_NAME=${SENZING_TRUTH_SET_2_DATA_SOURCE_NAME:-"WATCHLIST"}
 WEB_APP_PORT=${SENZING_WEB_APP_PORT:-"8251"}
 API_SERVER_PORT=${SENZING_API_SERVER_PORT:-"8250"}
 
@@ -315,7 +315,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
 #            --rm \
 #            --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
 #            --volume ~/Downloads:/data \
-#            senzing/yum -y localinstall /data/senzingapi-1.15.0-20106.x86_64.rpm /data/senzingdata-v1-1.0.0-19287.x86_64.rpm
+#            senzing/yum -y localinstall /data/senzingapi-2.0.0-20197.x86_64.rpm /data/senzingdata-v1-1.0.0-19287.x86_64.rpm
 
         sudo chown -R $(id -u):$(id -g) ${SENZING_PROJECT_DIR_REALPATH}
 
@@ -464,27 +464,17 @@ fi
 if [[ ( ! -z ${FIRST_TIME_INSTALL} ) ]]; then
     echo "Loading sample data." > ${TERMINAL_TTY}
 
-    # Download sample data files.
+    # Create file:  truthset-project.csv
 
-    curl -X GET \
-        --output ${SENZING_VAR_DIR}/truthset-person-v1-set1.csv \
-        https://public-read-access.s3.amazonaws.com/TestDataSets/SenzingTruthSet/truthset-person-v1-set1.csv
-
-    curl -X GET \
-        --output ${SENZING_VAR_DIR}/truthset-person-v1-set2.csv \
-        https://public-read-access.s3.amazonaws.com/TestDataSets/SenzingTruthSet/truthset-person-v1-set2.csv
-
-    # Create file:  sample-data-project.csv
-
-    cat <<EOT > ${SENZING_VAR_DIR}/sample-data-project.csv
+    cat <<EOT > ${SENZING_VAR_DIR}/truthset-project.csv
 DATA_SOURCE,FILE_FORMAT,FILE_NAME
-${TRUTH_SET_1_DATA_SOURCE_NAME},CSV,/var/opt/senzing/truthset-person-v1-set1.csv
-${TRUTH_SET_2_DATA_SOURCE_NAME},CSV,/var/opt/senzing/truthset-person-v1-set2.csv
+${TRUTH_SET_1_DATA_SOURCE_NAME},CSV,/opt/senzing/g2/python/demo/truth/truthset-person-v1-set1-data.csv
+${TRUTH_SET_2_DATA_SOURCE_NAME},CSV,/opt/senzing/g2/python/demo/truth/truthset-person-v1-set2-data.csv
 EOT
 
-    # Create file:  sample-data-project.ini
+    # Create file:  truthset-project.ini
 
-    cat <<EOT > ${SENZING_VAR_DIR}/sample-data-project.ini
+    cat <<EOT > ${SENZING_VAR_DIR}/truthset-project.ini
 [g2]
 G2Connection=sqlite3://na:na@/var/opt/senzing/sqlite/G2C.db
 iniPath=/etc/opt/senzing/G2Module.ini
@@ -492,7 +482,7 @@ collapsedTableSchema=Y
 evalQueueProcessing=1
 
 [project]
-projectFileName=/var/opt/senzing/sample-data-project.csv
+projectFileName=/var/opt/senzing/truthset-project.csv
 
 [transport]
 numThreads=4
@@ -512,8 +502,8 @@ EOT
         --volume ${SENZING_G2_DIR}:/opt/senzing/g2 \
         --volume ${SENZING_VAR_DIR}:/var/opt/senzing \
         senzing/g2loader:latest \
-            -c /var/opt/senzing/sample-data-project.ini \
-            -p /var/opt/senzing/sample-data-project.csv
+            -c /var/opt/senzing/truthset-project.ini \
+            -p /var/opt/senzing/truthset-project.csv
 
 fi
 
