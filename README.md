@@ -79,7 +79,7 @@ These are "one-time tasks" which may already have been completed.
 
 1. Command format: **`senzing-up.sh <project-directory>`**
 1. Run the command.
-   In this example, the Senzing instance will be put into the `~/my-first-senzing-test` project directory.
+   In this example, the Senzing instance will be put into the `~/senzing-up-demonstration` project directory.
    Example:
 
    ```console
