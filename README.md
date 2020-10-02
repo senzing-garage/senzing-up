@@ -83,7 +83,7 @@ These are "one-time tasks" which may already have been completed.
    Example:
 
    ```console
-   ~/senzing-up.sh ~/my-first-senzing-test
+   ~/senzing-up.sh ~/senzing-up-demonstration
    ```
 
 ### View web application
