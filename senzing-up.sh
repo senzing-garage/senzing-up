@@ -28,39 +28,6 @@ find_realpath() {
     echo "$REALPATH"
 }
 
-# Final instructions given to user.
-
-print_epilog() {
-
-    # Give user information before Docker container runs.
-
-    if [[ ( ! -z ${FIRST_TIME_INSTALL} ) ]]; then
-        echo " $(date) Installation is complete."
-        echo "Installation is complete." > ${TERMINAL_TTY}
-    elif [[ ( ! -z ${PERFORM_UPDATES} ) ]]; then
-        echo " $(date) Update is complete."
-        echo "Update is complete." > ${TERMINAL_TTY}
-    fi
-
-    echo "" > ${TERMINAL_TTY}
-    echo "${HORIZONTAL_RULE}" > ${TERMINAL_TTY}
-    echo "${HORIZONTAL_RULE:0:2} View: http://localhost:${WEB_APP_PORT}" > ${TERMINAL_TTY}
-
-    if [[ ( ! -z ${FIRST_TIME_INSTALL} ) ]]; then
-        echo "${HORIZONTAL_RULE:0:2} For tour of sample data, see:" > ${TERMINAL_TTY}
-        echo "${HORIZONTAL_RULE:0:2} https://senzing.zendesk.com/hc/en-us/articles/360047940434-Synthetic-Truth-Sets" > ${TERMINAL_TTY}
-    fi
-
-    echo "${HORIZONTAL_RULE:0:2} Project location: ${SENZING_PROJECT_DIR_REALPATH}" > ${TERMINAL_TTY}
-    echo "${HORIZONTAL_RULE}" > ${TERMINAL_TTY}
-    echo "" > ${TERMINAL_TTY}
-    echo "This terminal is running the Senzing Entity Search Web App." > ${TERMINAL_TTY}
-    echo "Do not close nor exit this terminal until the web app is no longer needed." > ${TERMINAL_TTY}
-    echo "To exit, enter CTRL-C" > ${TERMINAL_TTY}
-    echo "" > ${TERMINAL_TTY}
-
-}
-
 # -----------------------------------------------------------------------------
 # Main
 # -----------------------------------------------------------------------------
@@ -128,8 +95,6 @@ fi
 SENZING_ENVIRONMENT_SUBCOMMAND=${SENZING_ENVIRONMENT_SUBCOMMAND:-"add-docker-support-macos"}
 TRUTH_SET_1_DATA_SOURCE_NAME=${SENZING_TRUTH_SET_1_DATA_SOURCE_NAME:-"CUSTOMER"}
 TRUTH_SET_2_DATA_SOURCE_NAME=${SENZING_TRUTH_SET_2_DATA_SOURCE_NAME:-"WATCHLIST"}
-WEB_APP_PORT=${SENZING_WEB_APP_PORT:-"8251"}
-API_SERVER_PORT=${SENZING_API_SERVER_PORT:-"8250"}
 
 # Synthesize variables.
 
@@ -472,26 +437,6 @@ ${TRUTH_SET_1_DATA_SOURCE_NAME},CSV,/opt/senzing/g2/python/demo/truth/truthset-p
 ${TRUTH_SET_2_DATA_SOURCE_NAME},CSV,/opt/senzing/g2/python/demo/truth/truthset-person-v1-set2-data.csv
 EOT
 
-    # Create file:  truthset-project.ini
-
-    cat <<EOT > ${SENZING_VAR_DIR}/truthset-project.ini
-[g2]
-G2Connection=sqlite3://na:na@/var/opt/senzing/sqlite/G2C.db
-iniPath=/etc/opt/senzing/G2Module.ini
-collapsedTableSchema=Y
-evalQueueProcessing=1
-
-[project]
-projectFileName=/var/opt/senzing/truthset-project.csv
-
-[transport]
-numThreads=4
-
-[report]
-sqlCommitSize=1000
-reportCategoryLimit=1000
-EOT
-
     # Invoke G2Loader.py via Docker container to load files into Senzing Model.
 
     sudo docker run \
@@ -502,31 +447,33 @@ EOT
         --volume ${SENZING_G2_DIR}:/opt/senzing/g2 \
         --volume ${SENZING_VAR_DIR}:/var/opt/senzing \
         senzing/g2loader:latest \
-            -c /var/opt/senzing/truthset-project.ini \
             -p /var/opt/senzing/truthset-project.csv
 
 fi
 
-# Print epilog.
+# Print prolog.
 
-if [[ ( ! -z ${LOG_TO_TERMINAL} ) ]]; then
-    (sleep 30 && print_epilog)&   # Sleep to let Docker container run, then print.
-else
-    print_epilog
+if [[ ( ! -z ${FIRST_TIME_INSTALL} ) ]]; then
+    echo " $(date) Installation is complete."
+    echo "${HORIZONTAL_RULE:0:2} Installation is complete." > ${TERMINAL_TTY}
+elif [[ ( ! -z ${PERFORM_UPDATES} ) ]]; then
+    echo " $(date) Update is complete."
+    echo "${HORIZONTAL_RULE:0:2} Update is complete." > ${TERMINAL_TTY}
+fi
+
+if [[ ( ! -z ${FIRST_TIME_INSTALL} ) ]]; then
+    echo "${HORIZONTAL_RULE:0:2} For tour of sample data, see:" > ${TERMINAL_TTY}
+    echo "${HORIZONTAL_RULE:0:2} https://senzing.zendesk.com/hc/en-us/articles/360047940434-Synthetic-Truth-Sets" > ${TERMINAL_TTY}
 fi
 
 # Run web-app Docker container.
 
-sudo docker run \
-    --publish ${API_SERVER_PORT}:8090 \
-    --publish ${WEB_APP_PORT}:8251 \
-    --rm \
-    --user $(id -u):$(id -g) \
-    --volume ${SENZING_DATA_DIR}:/opt/senzing/data \
-    --volume ${SENZING_ETC_DIR}:/etc/opt/senzing \
-    --volume ${SENZING_G2_DIR}:/opt/senzing/g2 \
-    --volume ${SENZING_VAR_DIR}:/var/opt/senzing \
-    senzing/web-app-demo:latest
+${SENZING_PROJECT_DIR_REALPATH}/docker-bin/senzing-webapp-demo.sh up  > ${TERMINAL_TTY}
+
+# Print epilog.
+
+echo "${HORIZONTAL_RULE:0:2} Project location: ${SENZING_PROJECT_DIR_REALPATH}" > ${TERMINAL_TTY}
+echo "${HORIZONTAL_RULE:0:2} To stop docker formation, run:" > ${TERMINAL_TTY}
+echo "${HORIZONTAL_RULE:0:2} ${SENZING_PROJECT_DIR_REALPATH}/docker-bin/senzing-webapp-demo.sh down" > ${TERMINAL_TTY}
 
 echo "$(date) Done."
-echo "Done." > ${TERMINAL_TTY}
