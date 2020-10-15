@@ -461,19 +461,20 @@ elif [[ ( ! -z ${PERFORM_UPDATES} ) ]]; then
     echo "${HORIZONTAL_RULE:0:2} Update is complete." > ${TERMINAL_TTY}
 fi
 
-if [[ ( ! -z ${FIRST_TIME_INSTALL} ) ]]; then
-    echo "${HORIZONTAL_RULE:0:2} For tour of sample data, see:" > ${TERMINAL_TTY}
-    echo "${HORIZONTAL_RULE:0:2} https://senzing.zendesk.com/hc/en-us/articles/360047940434-Synthetic-Truth-Sets" > ${TERMINAL_TTY}
-fi
-
 # Run web-app Docker container.
 
-${SENZING_PROJECT_DIR_REALPATH}/docker-bin/senzing-webapp-demo.sh up  > ${TERMINAL_TTY}
+${SENZING_PROJECT_DIR_REALPATH}/docker-bin/senzing-webapp-demo.sh init  > ${TERMINAL_TTY}
 
 # Print epilog.
 
+echo "${HORIZONTAL_RULE:0:2} For more information, see:" > ${TERMINAL_TTY}
+echo "${HORIZONTAL_RULE:0:2} https://senzing.github.io/senzing-up" > ${TERMINAL_TTY}
 echo "${HORIZONTAL_RULE:0:2} Project location: ${SENZING_PROJECT_DIR_REALPATH}" > ${TERMINAL_TTY}
+echo "${HORIZONTAL_RULE:0:2}" > ${TERMINAL_TTY}
 echo "${HORIZONTAL_RULE:0:2} To stop docker formation, run:" > ${TERMINAL_TTY}
 echo "${HORIZONTAL_RULE:0:2} ${SENZING_PROJECT_DIR_REALPATH}/docker-bin/senzing-webapp-demo.sh down" > ${TERMINAL_TTY}
+echo "${HORIZONTAL_RULE:0:2}" > ${TERMINAL_TTY}
+echo "${HORIZONTAL_RULE:0:2} To restart docker formation, run:" > ${TERMINAL_TTY}
+echo "${HORIZONTAL_RULE:0:2} ${SENZING_PROJECT_DIR_REALPATH}/docker-bin/senzing-webapp-demo.sh up" > ${TERMINAL_TTY}
 
 echo "$(date) Done."
