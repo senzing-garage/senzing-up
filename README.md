@@ -121,6 +121,10 @@ These are "one-time tasks" which may already have been completed.
     ~/senzing-up.sh ~/senzing-up-demonstration
     ```
 
+1. **Note:** This may take a while as many Docker images will be downloaded.
+   This is a one-time cost.
+   Subsequent use will use cached Docker images.
+
 ### View web application
 
 1. Visit [http://localhost:8251](http://localhost:8251).

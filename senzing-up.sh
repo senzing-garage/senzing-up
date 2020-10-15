@@ -100,8 +100,7 @@ TRUTH_SET_2_DATA_SOURCE_NAME=${SENZING_TRUTH_SET_2_DATA_SOURCE_NAME:-"WATCHLIST"
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null 2>&1 && pwd )"
 SENZING_PROJECT_DIR_REALPATH=$(find_realpath ${SENZING_PROJECT_DIR})
-
-HORIZONTAL_RULE="=================================================================================="
+HORIZONTAL_RULE="=============================================================================="
 SENZING_DATA_DIR=${SENZING_PROJECT_DIR_REALPATH}/data
 SENZING_DOCKER_BIN_DIR=${SENZING_PROJECT_DIR_REALPATH}/docker-bin
 SENZING_ETC_DIR=${SENZING_PROJECT_DIR_REALPATH}/docker-etc
@@ -467,8 +466,6 @@ ${SENZING_PROJECT_DIR_REALPATH}/docker-bin/senzing-webapp-demo.sh init  > ${TERM
 
 # Print epilog.
 
-echo "${HORIZONTAL_RULE:0:2} For more information, see:" > ${TERMINAL_TTY}
-echo "${HORIZONTAL_RULE:0:2} https://senzing.github.io/senzing-up" > ${TERMINAL_TTY}
 echo "${HORIZONTAL_RULE:0:2} Project location: ${SENZING_PROJECT_DIR_REALPATH}" > ${TERMINAL_TTY}
 echo "${HORIZONTAL_RULE:0:2}" > ${TERMINAL_TTY}
 echo "${HORIZONTAL_RULE:0:2} To stop docker formation, run:" > ${TERMINAL_TTY}
@@ -476,5 +473,9 @@ echo "${HORIZONTAL_RULE:0:2} ${SENZING_PROJECT_DIR_REALPATH}/docker-bin/senzing-
 echo "${HORIZONTAL_RULE:0:2}" > ${TERMINAL_TTY}
 echo "${HORIZONTAL_RULE:0:2} To restart docker formation, run:" > ${TERMINAL_TTY}
 echo "${HORIZONTAL_RULE:0:2} ${SENZING_PROJECT_DIR_REALPATH}/docker-bin/senzing-webapp-demo.sh up" > ${TERMINAL_TTY}
+echo "${HORIZONTAL_RULE:0:2}" > ${TERMINAL_TTY}
+echo "${HORIZONTAL_RULE:0:2} For more information, see:" > ${TERMINAL_TTY}
+echo "${HORIZONTAL_RULE:0:2} https://senzing.github.io/senzing-up" > ${TERMINAL_TTY}
+echo "${HORIZONTAL_RULE}" > ${TERMINAL_TTY}
 
 echo "$(date) Done."
