@@ -10,11 +10,12 @@ It installs Senzing into a folder and creates shell scripts to manage tasks.
 [senzing-up.sh](senzing-up.sh) performs:
 
 1. Creates a folder that will contain all artifacts.
+    1. Meaning: Simply delete the folder to uninstall.
 1. Installs the latest version of `senzingapi` and `senzingdata` into the folder.
     1. If folder contains earlier version of Senzing, it will be non-destructively updated.
 1. Creates shell scripts for use with Senzing Docker containers.
     1. Details in [senzing-environment](https://github.com/Senzing/senzing-environment).
-1. Loads Senzing Model with "Truth Set".
+1. Loads Senzing Model with an example "Truth Set".
 1. Launches the Senzing API Sever and Senzing Entity Search web application using a local SQLite database.
 
 ### Contents
@@ -127,7 +128,7 @@ These are "one-time tasks" which may already have been completed.
 
 ### View web application
 
-1. Visit [http://localhost:8251](http://localhost:8251).
+1. If deployed on a local workstation, visit [http://localhost:8251](http://localhost:8251).
 
-1. For a tour of sample data, visit
-   [Synthetic Truth Sets](https://senzing.zendesk.com/hc/en-us/articles/360047940434-Synthetic-Truth-Sets).
+1. For more examples of use, visit the
+   [tutorial](docs/tutorial.md).
