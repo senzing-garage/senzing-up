@@ -7,7 +7,7 @@ It installs Senzing into a folder and creates shell scripts to manage tasks.
 
 ## Overview
 
-[senzing-up.sh](senzing-up.sh) performs:
+[senzing-up.sh](senzing-up.sh) performs the following:
 
 1. Creates a folder that will contain all artifacts.
     1. Meaning: Simply delete the folder to uninstall.
