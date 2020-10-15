@@ -1,5 +1,6 @@
-# template-repository
+# Information on senzing-up
 
-Placeholder for [GitHub pages](https://pages.github.com/).
+## Synthetic Truth Sets
 
-See [https://senzing.github.io/template-repository](https://senzing.github.io/template-repository).
+For more informat
+[Synthetic Truth Sets](https://senzing.zendesk.com/hc/en-us/articles/360047940434-Synthetic-Truth-Sets)
