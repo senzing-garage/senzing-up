@@ -21,7 +21,7 @@ Advanced topics for using `senzing-up.sh`.
 
 To create additional tenants, it's not necessary to run `senzing-up.sh` again.
 Copying and modifying will work.
-`senzing-up.sh` will perform esse
+The copy command, `cp`, will give the same results as `senzing-up.sh`.
 
 1. Copy the directory for Tenant #1 into a new directory
    Example:
