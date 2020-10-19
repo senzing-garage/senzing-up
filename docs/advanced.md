@@ -13,8 +13,9 @@
 
 ### Next tenants
 
-To create additional tenants, it's not necessary to run `senzing-up.sh` again (although it will work).
+To create additional tenants, it's not necessary to run `senzing-up.sh` again.
 Copying and modifying will work.
+`senzing-up.sh` will perform esse
 
 1. Copy the directory for Tenant #1 into a new directory
    Example:
@@ -23,9 +24,8 @@ Copying and modifying will work.
     cp --recursive ~/senzing-up-demonstration-1 ~/senzing-up-demonstration-N
     ```
 
-1. Specify unique ports for Tenant #N's docker containers.
-   To do this, edit `~/senzing-up-demonstration-N/docker-bin/docker-environment-vars.sh`
-   Give each docker container a unique port.
+1. In `~/senzing-up-demonstration-N/docker-bin/docker-environment-vars.sh`,
+   specify unique ports for Tenant #N's docker containers.
    Example:
 
     ```console
@@ -43,11 +43,16 @@ Copying and modifying will work.
     export SENZING_DOCKER_PORT_XTERM=9211
     ```
 
+1. In `~/senzing-up-demonstration-N/docker-bin/docker-environment-vars.sh`, change `SENZING_PROJECT_DIR`.
+   Example:
 
+    ```console
+    export SENZING_PROJECT_DIR=/home/username/senzing-up-demonstration-N
+    ```
 
-:thinking: The following tasks need to be complete before proceeding.
-These are "one-time tasks" which may already have been completed.
+1. In `~/senzing-up-demonstration-N/docker-bin/docker-environment-vars.sh`, change `SENZING_PROJECT_NAME`.
+   Example:
 
-1. The following software programs need to be installed:
-    1. [docker](https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-docker.md)
-    1. [senzing-up](https://github.com/Senzing/senzing-up)
+    ```console
+    export SENZING_PROJECT_NAME=tenant-N
+    ```
