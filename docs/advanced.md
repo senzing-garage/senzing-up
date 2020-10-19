@@ -1,5 +1,11 @@
 # senzing-up advanced
 
+Advanced topics for using `senzing-up.sh`.
+
+1. [Multi-tenancy](#multi-tenancy)
+    1. [First tenant](#first-tenant)
+    1. [Next tenants](#next-tenants)
+
 ## Multi-tenancy
 
 ### First tenant
