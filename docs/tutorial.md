@@ -14,6 +14,7 @@ These are "one-time tasks" which may already have been completed.
 ## Demonstrations
 
 1. [Demonstration 1](#demonstration-1) - Senzing Entity Server Web app.
+   This is the "default" demonstration launched by `senzing-up.sh`.
 1. [Demonstration 2](#demonstration-2) - Exploratory Data Analysis.
 1. [Demonstration 3](#demonstration-3) - Swagger API explorer.
 1. [Demonstration 4](#demonstration-4) - Jupyter notebooks.
