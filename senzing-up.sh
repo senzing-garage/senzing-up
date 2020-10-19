@@ -73,6 +73,7 @@ if [[ ( -n "$(command -v python3)" ) ]]; then
     PYTHON3_INSTALLED=1
 else
     echo "WARNING: python3 is not installed."
+    echo "WARNING: Files will not be created in docker-bin directory."
     echo "See https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-python-3.md"
 fi
 
@@ -343,6 +344,11 @@ if [[ ( ! -e ${DOCKER_ENVIRONMENT_VARS_FILENAME} ) ]]; then
 
     if [[ ( ! -z ${PYTHON3_INSTALLED} ) ]]; then
         ${SENZING_ENVIRONMENT_FILENAME} ${SENZING_ENVIRONMENT_SUBCOMMAND} --project-dir ${SENZING_PROJECT_DIR}
+
+        # Create private network.
+
+        sudo docker network create senzing-up
+        echo "export SENZING_DOCKER_RUN_PARAMETERS_GLOBAL=\"--net senzing-up\"" >> ${SENZING_PROJECT_DIR}/docker-bin/docker-environment-vars.sh
     fi
 
     if [[ ( ! -d ${SENZING_DOCKER_BIN_DIR} ) ]]; then

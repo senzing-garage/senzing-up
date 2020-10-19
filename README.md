@@ -27,7 +27,11 @@ It installs Senzing into a folder and creates shell scripts to manage tasks.
     1. [Prerequisite software](#prerequisite-software)
     1. [Download](#download)
     1. [Start web application](#start-web-application)
+    1. [Stop web application](#stop-web-application)
+    1. [Restart web application](#restart-web-application)
     1. [View web application](#view-web-application)
+    1. [Tutorial](tutorial)
+1. [Advanced](advanced)
 
 ## Preamble
 
@@ -126,9 +130,44 @@ These are "one-time tasks" which may already have been completed.
    This is a one-time cost.
    Subsequent use will use cached Docker images.
 
+### Stop web application
+
+1. To stop the demonstration, use `senzing-webapp-demo.sh down`.
+   Example:
+
+    ```console
+    ~/senzing-up-demonstration/docker-bin/senzing-webapp-demo.sh down
+    ```
+
+### Restart web application
+
+There are 2 ways to re-start the web application.
+
+1. **Method #1:** Use "docker-bin/senzing-webapp-demo.sh".
+   This simply starts the docker container.
+   Example:
+
+    ```console
+    ~/senzing-up-demonstration/docker-bin/senzing-webapp-demo.sh up
+    ```
+
+1. **Method #2:** Use "senzing-up.sh".
+   This method will prompt you for update detection
+   and then will start the docker container.
+   Example:
+
+    ```console
+    ~/senzing-up.sh ~/senzing-up-demonstration
+    ```
+
 ### View web application
 
 1. If deployed on a local workstation, visit [http://localhost:8251](http://localhost:8251).
 
-1. For more examples of use, visit the
-   [tutorial](docs/tutorial.md).
+### Tutorial
+
+1. For more examples of use, visit the [tutorial](docs/tutorial.md).
+
+## Advanced
+
+1. For advanced examples of use, visit [advanced](docs/advanced.md).
