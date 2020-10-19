@@ -143,7 +143,7 @@ These are "one-time tasks" which may already have been completed.
 
 There are 2 ways to re-start the web application.
 
-1. **Method #1:** Use "docker-bin/senzing-webapp-demo.sh".
+1. **Method #1:** Use `docker-bin/senzing-webapp-demo.sh`.
    This simply starts the docker container.
    Example:
 
@@ -151,7 +151,7 @@ There are 2 ways to re-start the web application.
     ~/senzing-up-demonstration/docker-bin/senzing-webapp-demo.sh up
     ```
 
-1. **Method #2:** Use "senzing-up.sh".
+1. **Method #2:** Use `senzing-up.sh`.
    This method will prompt you for update detection
    and then will start the docker container.
    Example:
