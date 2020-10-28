@@ -224,6 +224,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
     # Determine version of senzingapi on public repository.
 
     sudo docker run \
+      --privileged \
       --rm \
       senzing/yum list senzingapi > ${SENZING_PROJECT_DIR}/yum-list-senzingapi.txt
 
@@ -234,6 +235,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
     # Determine version of senzingdata on public repository.
 
     sudo docker run \
+      --privileged \
       --rm \
       senzing/yum list senzingdata-v1 > ${SENZING_PROJECT_DIR}/yum-list-senzingdata.txt
 
@@ -269,6 +271,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
 
         sudo docker run \
           --env SENZING_ACCEPT_EULA=${SENZING_ACCEPT_EULA} \
+          --privileged \
           --rm \
           --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
           senzing/yum:latest
@@ -276,6 +279,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
         # DEBUG: local install.
 
 #        sudo docker run \
+#            --privileged \
 #            --env SENZING_ACCEPT_EULA=${SENZING_ACCEPT_EULA} \
 #            --rm \
 #            --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
@@ -367,6 +371,7 @@ if [[ ( ! -e ${SENZING_ETC_DIR} ) ]]; then
     echo "Initializing Senzing configuration." > ${TERMINAL_TTY}
 
     sudo docker run \
+        --privileged \
         --rm \
         --user 0 \
         --volume ${SENZING_DATA_DIR}:/opt/senzing/data \
@@ -386,6 +391,7 @@ if [[ ( ! -z ${PERFORM_UPDATES} ) ]]; then
     echo "Updating Senzing database schema." > ${TERMINAL_TTY}
 
     sudo docker run \
+        --privileged \
         --rm \
         --user $(id -u):$(id -g) \
         --volume ${SENZING_DATA_DIR}:/opt/senzing/data \
@@ -411,6 +417,7 @@ if [[ ( ! -z ${PERFORM_UPDATES} ) ]]; then
         echo ".. Verifying ${FILENAME}"
 
         sudo docker run \
+            --privileged \
             --rm \
             --user $(id -u):$(id -g) \
             --volume ${SENZING_DATA_DIR}:/opt/senzing/data \
@@ -445,6 +452,7 @@ EOT
     # Invoke G2Loader.py via Docker container to load files into Senzing Model.
 
     sudo docker run \
+        --privileged \
         --rm \
         --user $(id -u):$(id -g) \
         --volume ${SENZING_DATA_DIR}:/opt/senzing/data \
