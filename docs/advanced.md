@@ -143,18 +143,18 @@ The copy command, `cp`, of a fresh install will give the same results as `senzin
     export SENZING_SQL_CONNECTION="mssql://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_DATABASE}"
     ```
 
-1. :pencil2: Initialize configuration files.
-   Example:
-
-    ```console
-    ~/senzing-up-demonstration-N/docker-bin/senzing-init-container.sh up
-    ```
-
 1. :pencil2: Install database driver files.
    Example:
 
     ```console
     ~/senzing-up-demonstration-N/docker-bin/senzing-mssql-driver-installer.sh up
+    ```
+
+1. :pencil2: Initialize configuration files.
+   Example:
+
+    ```console
+    ~/senzing-up-demonstration-N/docker-bin/senzing-init-container.sh up
     ```
 
 ### Db2
@@ -176,16 +176,16 @@ The copy command, `cp`, of a fresh install will give the same results as `senzin
     export SENZING_SQL_CONNECTION="db2://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_DATABASE}"
     ```
 
-1. :pencil2: Initialize configuration files.
-   Example:
-
-    ```console
-    ~/senzing-up-demonstration-N/docker-bin/senzing-init-container.sh up
-    ```
-
 1. :pencil2: Install database driver files.
    Example:
 
     ```console
     ~/senzing-up-demonstration-N/docker-bin/senzing-db2-driver-installer.sh up
+    ```
+
+1. :pencil2: Initialize configuration files.
+   Example:
+
+    ```console
+    ~/senzing-up-demonstration-N/docker-bin/senzing-init-container.sh up
     ```
