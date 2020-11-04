@@ -352,7 +352,7 @@ if [[ ( ! -e ${DOCKER_ENVIRONMENT_VARS_FILENAME} ) ]]; then
         # Create private network.
 
         sudo docker network create senzing-up
-        echo "export SENZING_DOCKER_RUN_PARAMETERS_GLOBAL=\"--net senzing-up\"" >> ${SENZING_PROJECT_DIR}/docker-bin/docker-environment-vars.sh
+        echo "export SENZING_NETWORK_PARAMETER=\"--net senzing-up\"" >> ${SENZING_PROJECT_DIR}/docker-bin/docker-environment-vars.sh
     fi
 
     if [[ ( ! -d ${SENZING_DOCKER_BIN_DIR} ) ]]; then
