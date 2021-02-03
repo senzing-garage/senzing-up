@@ -9,6 +9,12 @@ Where:
     project-dir = Path to new or existing Senzing project
 "
 
+SENZING_DOCKER_IMAGE_VERSION_G2LOADER=1.4.1
+SENZING_DOCKER_IMAGE_VERSION_INIT_CONTAINER=1.6.4
+SENZING_DOCKER_IMAGE_VERSION_SENZING_DEBUG=1.3.5
+SENZING_DOCKER_IMAGE_VERSION_WEB_APP_DEMO=2.1.1
+SENZING_DOCKER_IMAGE_VERSION_YUM=1.1.3
+
 # -----------------------------------------------------------------------------
 # Functions
 # -----------------------------------------------------------------------------
@@ -196,15 +202,15 @@ if [[ ( ! -z ${FIRST_TIME_INSTALL} ) \
 
     echo "Pulling Docker images." > ${TERMINAL_TTY}
 
-    sudo docker pull senzing/g2loader:latest
+    sudo docker pull senzing/g2loader:${SENZING_DOCKER_IMAGE_VERSION_G2LOADER}
     echo -ne 'Pulling ...\r' > ${TERMINAL_TTY}
-    sudo docker pull senzing/init-container:latest
+    sudo docker pull senzing/init-container:${SENZING_DOCKER_IMAGE_VERSION_INIT_CONTAINER}
     echo -ne 'Pulling ......\r' > ${TERMINAL_TTY}
-    sudo docker pull senzing/senzing-debug:latest
+    sudo docker pull senzing/senzing-debug:${SENZING_DOCKER_IMAGE_VERSION_SENZING_DEBUG}
     echo -ne 'Pulling .........\r' > ${TERMINAL_TTY}
-    sudo docker pull senzing/web-app-demo:latest
+    sudo docker pull senzing/web-app-demo:${SENZING_DOCKER_IMAGE_VERSION_WEB_APP_DEMO}
     echo -ne 'Pulling ............\r' > ${TERMINAL_TTY}
-    sudo docker pull senzing/yum:latest
+    sudo docker pull senzing/yum:${SENZING_DOCKER_IMAGE_VERSION_YUM}
     echo -ne 'Pulling ...............\r' > ${TERMINAL_TTY}
 
 fi
@@ -226,7 +232,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
     sudo docker run \
       --privileged \
       --rm \
-      senzing/yum list senzingapi > ${SENZING_PROJECT_DIR}/yum-list-senzingapi.txt
+      senzing/yum:${SENZING_DOCKER_IMAGE_VERSION_YUM} list senzingapi > ${SENZING_PROJECT_DIR}/yum-list-senzingapi.txt
 
     SENZING_G2_CURRENT_VERSION=$(grep senzingapi ${SENZING_PROJECT_DIR}/yum-list-senzingapi.txt | awk '{print $2}' | awk -F \- {'print $1'})
     SENZING_G2_DIR_CURRENT=${SENZING_G2_DIR}-${SENZING_G2_CURRENT_VERSION}
@@ -237,7 +243,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
     sudo docker run \
       --privileged \
       --rm \
-      senzing/yum list senzingdata-v1 > ${SENZING_PROJECT_DIR}/yum-list-senzingdata.txt
+      senzing/yum:${SENZING_DOCKER_IMAGE_VERSION_YUM} list senzingdata-v1 > ${SENZING_PROJECT_DIR}/yum-list-senzingdata.txt
 
     SENZING_DATA_CURRENT_VERSION=$(grep senzingdata ${SENZING_PROJECT_DIR}/yum-list-senzingdata.txt | awk '{print $2}' | awk -F \- {'print $1'})
     SENZING_DATA_DIR_CURRENT=${SENZING_DATA_DIR}-${SENZING_DATA_CURRENT_VERSION}
@@ -274,7 +280,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
           --privileged \
           --rm \
           --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
-          senzing/yum:latest
+          senzing/yum:${SENZING_DOCKER_IMAGE_VERSION_YUM}
 
         # DEBUG: local install.
 
@@ -284,7 +290,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
 #            --rm \
 #            --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
 #            --volume ~/Downloads:/data \
-#            senzing/yum -y localinstall /data/senzingapi-2.0.0-20197.x86_64.rpm /data/senzingdata-v1-1.0.0-19287.x86_64.rpm
+#            senzing/yum:${SENZING_DOCKER_IMAGE_VERSION_YUM} -y localinstall /data/senzingapi-2.0.0-20197.x86_64.rpm /data/senzingdata-v1-1.0.0-19287.x86_64.rpm
 
         sudo chown -R $(id -u):$(id -g) ${SENZING_PROJECT_DIR_REALPATH}
 
@@ -378,7 +384,7 @@ if [[ ( ! -e ${SENZING_ETC_DIR} ) ]]; then
         --volume ${SENZING_ETC_DIR}:/etc/opt/senzing \
         --volume ${SENZING_G2_DIR}:/opt/senzing/g2 \
         --volume ${SENZING_VAR_DIR}:/var/opt/senzing \
-        senzing/init-container:latest
+        senzing/init-container:${SENZING_DOCKER_IMAGE_VERSION_INIT_CONTAINER}
 
     sudo chown -R $(id -u):$(id -g) ${SENZING_PROJECT_DIR_REALPATH}
 
@@ -398,7 +404,7 @@ if [[ ( ! -z ${PERFORM_UPDATES} ) ]]; then
         --volume ${SENZING_ETC_DIR}:/etc/opt/senzing \
         --volume ${SENZING_G2_DIR}:/opt/senzing/g2 \
         --volume ${SENZING_VAR_DIR}:/var/opt/senzing \
-        senzing/senzing-debug:latest \
+        senzing/senzing-debug:${SENZING_DOCKER_IMAGE_VERSION_SENZING_DEBUG} \
             /opt/senzing/g2/bin/g2dbupgrade \
                 -c /etc/opt/senzing/G2Module.ini \
                 -a
@@ -424,7 +430,7 @@ if [[ ( ! -z ${PERFORM_UPDATES} ) ]]; then
             --volume ${SENZING_ETC_DIR}:/etc/opt/senzing \
             --volume ${SENZING_G2_DIR}:/opt/senzing/g2 \
             --volume ${SENZING_VAR_DIR}:/var/opt/senzing \
-            senzing/senzing-debug:latest \
+            senzing/senzing-debug:${SENZING_DOCKER_IMAGE_VERSION_SENZING_DEBUG} \
                 /opt/senzing/g2/python/G2ConfigTool.py \
                     -c /etc/opt/senzing/G2Module.ini \
                     -f /opt/senzing/g2/resources/config/${FILENAME}
@@ -459,7 +465,7 @@ EOT
         --volume ${SENZING_ETC_DIR}:/etc/opt/senzing \
         --volume ${SENZING_G2_DIR}:/opt/senzing/g2 \
         --volume ${SENZING_VAR_DIR}:/var/opt/senzing \
-        senzing/g2loader:latest \
+        senzing/g2loader:${SENZING_DOCKER_IMAGE_VERSION_G2LOADER} \
             -p /var/opt/senzing/truthset-project.csv
 
 fi
