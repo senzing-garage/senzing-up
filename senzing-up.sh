@@ -7,6 +7,8 @@ Usage:
     $(basename "$0") project-dir
 Where:
     project-dir = Path to new or existing Senzing project
+Version:
+    1.2.2
 "
 
 SENZING_DOCKER_IMAGE_VERSION_G2LOADER=1.4.1
