@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+SCRIPT_VERSION=1.2.2
+
 # Usage / help.
 
 USAGE="Bring up Senzing web application.
@@ -8,7 +10,7 @@ Usage:
 Where:
     project-dir = Path to new or existing Senzing project
 Version:
-    1.2.2
+    ${SCRIPT_VERSION}
 "
 
 SENZING_DOCKER_IMAGE_VERSION_G2LOADER=1.4.1
@@ -190,6 +192,7 @@ fi
 echo ""
 echo "${HORIZONTAL_RULE}"
 echo "${HORIZONTAL_RULE:0:2} Start time: $(date)"
+echo "${HORIZONTAL_RULE:0:2} Script version: ${SCRIPT_VERSION}"
 echo "${HORIZONTAL_RULE}"
 echo ""
 echo "Operating system running script: ${HOST_MACHINE_OS}"
