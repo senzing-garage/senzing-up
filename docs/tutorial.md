@@ -19,6 +19,7 @@ These are "one-time tasks" which may already have been completed.
 1. [Demonstration 3](#demonstration-3) - Swagger API explorer.
 1. [Demonstration 4](#demonstration-4) - Jupyter notebooks.
 1. [Demonstration 5](#demonstration-5) - View database.
+1. [Demonstration 6](#demonstration-6) - Load CSV file into Senzing Engine using G2Loader.
 
 ## Demonstration 1
 
@@ -168,3 +169,52 @@ View database.
     ```console
     ${SENZING_UP_DIR}/docker-bin/senzing-sqlite-web.sh down
     ```
+
+## Demonstration 6
+
+Load CSV file into Senzing Engine using G2Loader.
+
+1. :pencil2: Identify directory created by `senzing-up.py`.
+   Example:
+
+    ```console
+    export SENZING_UP_DIR=~/senzing-up-demonstration
+    ```
+
+1. :pencil2: Copy your `csv` file to `${SENZING_UP_DIR}/var` so that it can be seen inside the docker container.
+   Example:
+
+    ```console
+    cp /path/to/my.csv ${SENZING_UP_DIR}/var/my.csv
+    ```
+
+1. Make sure docker network is up.
+   Example:
+
+    ```console
+    sudo docker network create senzing-up
+    ```
+
+1. Bring up the Senzing console docker image.
+   Example:
+
+    ```console
+    ${SENZING_UP_DIR}/docker-bin/senzing-console.sh
+    ```
+
+1. In the Senzing console, verify your file is there.
+   Example:
+
+    ```console
+    ls -la /var/opt/senzing
+    ```
+
+1. In the Senzing console, use `G2Loader.py` to load the data.
+   Example:
+
+    ```console
+    G2Loader.py  -f /var/opt/senzing/my.csv/?data_source=TEST,file_format=CSV
+    ```
+
+1. For more information on `G2Loader.py`, see
+   [Getting Started](https://senzing.zendesk.com/hc/en-us/articles/115004450368-Getting-Started).
