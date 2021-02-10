@@ -213,7 +213,7 @@ Load CSV file into Senzing Engine using G2Loader.
    Example:
 
     ```console
-    G2Loader.py  -f /var/opt/senzing/my.csv/?data_source=TEST,file_format=CSV
+    G2Loader.py -f /var/opt/senzing/my.csv/?data_source=TEST,file_format=CSV
     ```
 
 1. For more information on `G2Loader.py`, see
