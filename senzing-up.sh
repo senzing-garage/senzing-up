@@ -319,7 +319,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
 
         if [[ ( ! -e ${SENZING_DATA_DIR_CURRENT} ) ]]; then
             mv data data-backup
-            mv data-backup/2.0.0 data-${SENZING_DATA_CURRENT_VERSION}
+            mv data-backup/${SENZING_DATA_CURRENT_VERSION} data-${SENZING_DATA_CURRENT_VERSION}
             rmdir data-backup
             ln -s data-${SENZING_DATA_CURRENT_VERSION} data
             rm ${SENZING_DATA_DIR}-bak-${TIMESTAMP}
