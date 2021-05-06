@@ -295,7 +295,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
 #            --rm \
 #            --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
 #            --volume ~/Downloads:/data \
-#            senzing/yum:${SENZING_DOCKER_IMAGE_VERSION_YUM} -y localinstall /data/senzingapi-2.0.0-20197.x86_64.rpm /data/senzingdata-v1-1.0.0-19287.x86_64.rpm
+#            senzing/yum:${SENZING_DOCKER_IMAGE_VERSION_YUM} -y localinstall /data/senzingapi-2.0.0-20197.x86_64.rpm /data/senzingdata-v2-2.0.0-1.x86_64.rpm
 
         sudo chown -R $(id -u):$(id -g) ${SENZING_PROJECT_DIR_REALPATH}
 
@@ -319,7 +319,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
 
         if [[ ( ! -e ${SENZING_DATA_DIR_CURRENT} ) ]]; then
             mv data data-backup
-            mv data-backup/1.0.0 data-${SENZING_DATA_CURRENT_VERSION}
+            mv data-backup/2.0.0 data-${SENZING_DATA_CURRENT_VERSION}
             rmdir data-backup
             ln -s data-${SENZING_DATA_CURRENT_VERSION} data
             rm ${SENZING_DATA_DIR}-bak-${TIMESTAMP}
