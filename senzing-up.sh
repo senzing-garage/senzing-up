@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SCRIPT_VERSION=1.2.2
+SCRIPT_VERSION=1.3.0
 
 # Usage / help.
 
@@ -14,10 +14,10 @@ Version:
 "
 
 SENZING_DOCKER_IMAGE_VERSION_G2LOADER=1.4.1
-SENZING_DOCKER_IMAGE_VERSION_INIT_CONTAINER=1.6.6
+SENZING_DOCKER_IMAGE_VERSION_INIT_CONTAINER=1.6.9
 SENZING_DOCKER_IMAGE_VERSION_SENZING_DEBUG=1.3.5
 SENZING_DOCKER_IMAGE_VERSION_WEB_APP_DEMO=2.1.1
-SENZING_DOCKER_IMAGE_VERSION_YUM=1.1.3
+SENZING_DOCKER_IMAGE_VERSION_YUM=1.1.4
 
 # -----------------------------------------------------------------------------
 # Functions
@@ -248,7 +248,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
     sudo docker run \
       --privileged \
       --rm \
-      senzing/yum:${SENZING_DOCKER_IMAGE_VERSION_YUM} list senzingdata-v1 > ${SENZING_PROJECT_DIR}/yum-list-senzingdata.txt
+      senzing/yum:${SENZING_DOCKER_IMAGE_VERSION_YUM} list senzingdata-v2 > ${SENZING_PROJECT_DIR}/yum-list-senzingdata.txt
 
     SENZING_DATA_CURRENT_VERSION=$(grep senzingdata ${SENZING_PROJECT_DIR}/yum-list-senzingdata.txt | awk '{print $2}' | awk -F \- {'print $1'})
     SENZING_DATA_DIR_CURRENT=${SENZING_DATA_DIR}-${SENZING_DATA_CURRENT_VERSION}
@@ -295,7 +295,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
 #            --rm \
 #            --volume ${SENZING_PROJECT_DIR_REALPATH}:/opt/senzing \
 #            --volume ~/Downloads:/data \
-#            senzing/yum:${SENZING_DOCKER_IMAGE_VERSION_YUM} -y localinstall /data/senzingapi-2.0.0-20197.x86_64.rpm /data/senzingdata-v1-1.0.0-19287.x86_64.rpm
+#            senzing/yum:${SENZING_DOCKER_IMAGE_VERSION_YUM} -y localinstall /data/senzingapi-2.0.0-20197.x86_64.rpm /data/senzingdata-v2-2.0.0-1.x86_64.rpm
 
         sudo chown -R $(id -u):$(id -g) ${SENZING_PROJECT_DIR_REALPATH}
 
@@ -319,7 +319,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
 
         if [[ ( ! -e ${SENZING_DATA_DIR_CURRENT} ) ]]; then
             mv data data-backup
-            mv data-backup/1.0.0 data-${SENZING_DATA_CURRENT_VERSION}
+            mv data-backup/2.0.0 data-${SENZING_DATA_CURRENT_VERSION}
             rmdir data-backup
             ln -s data-${SENZING_DATA_CURRENT_VERSION} data
             rm ${SENZING_DATA_DIR}-bak-${TIMESTAMP}
