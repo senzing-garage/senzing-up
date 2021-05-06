@@ -10,7 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed in 1.3.0
 
-- Support for `senzingdata-v2`
+- Migration to `senzingdata-2.0.0`
+- Update docker image versions
+  - senzing/init-container:1.6.6 to senzing/init-container:1.6.9
+  - senzing/yum:1.1.3 to senzing/yum:1.1.4
 
 ## [1.2.2] - 2021-02-05
 
