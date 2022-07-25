@@ -8,7 +8,7 @@ The following demonstrations show how to use `senzing-up` projects.
 These are "one-time tasks" which may already have been completed.
 
 1. The following software programs need to be installed:
-    1. [docker](https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-docker.md)
+    1. [docker](https://github.com/Senzing/knowledge-base/blob/main/HOWTO/install-docker.md)
     1. [senzing-up](https://github.com/Senzing/senzing-up)
 
 ## Demonstrations
