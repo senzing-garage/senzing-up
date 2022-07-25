@@ -37,7 +37,7 @@ It installs Senzing into a folder and creates shell scripts to manage tasks.
 
 At [Senzing](http://senzing.com),
 we strive to create GitHub documentation in a
-"[don't make me think](https://github.com/Senzing/knowledge-base/blob/master/WHATIS/dont-make-me-think.md)" style.
+"[don't make me think](https://github.com/Senzing/knowledge-base/blob/main/WHATIS/dont-make-me-think.md)" style.
 For the most part, instructions are copy and paste.
 Whenever thinking is needed, it's marked with a "thinking" icon :thinking:.
 Whenever customization is needed, it's marked with a "pencil" icon :pencil2:.
@@ -66,7 +66,7 @@ describing where we can improve.   Now on with the show...
 These are "one-time tasks" which may already have been completed.
 
 1. The following software programs need to be installed and running on the workstation:
-    1. [docker](https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-docker.md)
+    1. [docker](https://github.com/Senzing/knowledge-base/blob/main/HOWTO/install-docker.md)
         1. Verify.
            Example:
 
@@ -84,7 +84,7 @@ These are "one-time tasks" which may already have been completed.
                 1. Uncheck "Enable Kubernetes"
             1. Click "Apply & Restart"
 
-    1. [curl](https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-curl.md)
+    1. [curl](https://github.com/Senzing/knowledge-base/blob/main/HOWTO/install-curl.md)
         1. Verify.
            Example:
 
@@ -92,7 +92,7 @@ These are "one-time tasks" which may already have been completed.
             curl --version
             ```
 
-    1. [python3](https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-python-3.md)
+    1. [python3](https://github.com/Senzing/knowledge-base/blob/main/HOWTO/install-python-3.md)
         1. Verify.
            Example:
 
@@ -103,14 +103,14 @@ These are "one-time tasks" which may already have been completed.
 ### Download
 
 1. Get a local copy of
-   [senzing-up.sh](https://raw.githubusercontent.com/Senzing/senzing-up/master/senzing-up.sh)
+   [senzing-up.sh](https://raw.githubusercontent.com/Senzing/senzing-up/main/senzing-up.sh)
    and make executable.
    Example:
 
     ```console
     curl -X GET \
       --output ~/senzing-up.sh \
-      https://raw.githubusercontent.com/Senzing/senzing-up/master/senzing-up.sh
+      https://raw.githubusercontent.com/Senzing/senzing-up/main/senzing-up.sh
 
     chmod +x ~/senzing-up.sh
     ```

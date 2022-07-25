@@ -69,13 +69,13 @@ fi
 
 if [[ ( ! -n "$(command -v curl)" ) ]]; then
     echo "ERROR: curl is required."
-    echo "See https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-curl.md"
+    echo "See https://github.com/Senzing/knowledge-base/blob/main/HOWTO/install-curl.md"
     exit 1
 fi
 
 if [[ ( ! -n "$(command -v docker)" ) ]]; then
     echo "ERROR: docker is required."
-    echo "See https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-docker.md"
+    echo "See https://github.com/Senzing/knowledge-base/blob/main/HOWTO/install-docker.md"
     exit 1
 fi
 
@@ -84,7 +84,7 @@ if [[ ( -n "$(command -v python3)" ) ]]; then
 else
     echo "WARNING: python3 is not installed."
     echo "WARNING: Files will not be created in docker-bin directory."
-    echo "See https://github.com/Senzing/knowledge-base/blob/master/HOWTO/install-python-3.md"
+    echo "See https://github.com/Senzing/knowledge-base/blob/main/HOWTO/install-python-3.md"
 fi
 
 # Determine if Docker is running.
@@ -349,7 +349,7 @@ if [[ ( ! -e ${DOCKER_ENVIRONMENT_VARS_FILENAME} ) ]]; then
 
         curl -X GET \
             --output ${SENZING_ENVIRONMENT_FILENAME} \
-            https://raw.githubusercontent.com/Senzing/senzing-environment/master/senzing-environment.py
+            https://raw.githubusercontent.com/Senzing/senzing-environment/main/senzing-environment.py
 
         chmod +x ${SENZING_ENVIRONMENT_FILENAME}
 
