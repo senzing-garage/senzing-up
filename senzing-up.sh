@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -x
-
 SCRIPT_VERSION=1.3.0
 
 # Usage / help.
