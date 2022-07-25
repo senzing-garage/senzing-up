@@ -293,7 +293,7 @@ if [[ ( ! -e ${SENZING_G2_DIR}/g2BuildVersion.json ) \
         sudo chown -R $(id -u):$(id -g) ${SENZING_PROJECT_DIR_REALPATH}
 
         # Create symbolic links to versioned directories.
-        # Tricky code: Also accounting for a failed/cancelled YUM install.
+        # Tricky code: Also accounting for a failed/cancelled APT install.
 
         pushd ${SENZING_PROJECT_DIR_REALPATH}
 
