@@ -66,7 +66,7 @@ describing where we can improve.   Now on with the show...
 These are "one-time tasks" which may already have been completed.
 
 1. The following software programs need to be installed and running on the workstation:
-    1. [docker](https://github.com/Senzing/knowledge-base/blob/main/HOWTO/install-docker.md)
+    1. [docker](https://github.com/Senzing/knowledge-base/blob/main/WHATIS/docker.md)
         1. Verify.
            Example:
 
@@ -84,7 +84,7 @@ These are "one-time tasks" which may already have been completed.
                 1. Uncheck "Enable Kubernetes"
             1. Click "Apply & Restart"
 
-    1. [curl](https://github.com/Senzing/knowledge-base/blob/main/HOWTO/install-curl.md)
+    1. [curl](https://github.com/Senzing/knowledge-base/blob/main/WHATIS/curl.md)
         1. Verify.
            Example:
 
@@ -92,7 +92,7 @@ These are "one-time tasks" which may already have been completed.
             curl --version
             ```
 
-    1. [python3](https://github.com/Senzing/knowledge-base/blob/main/HOWTO/install-python-3.md)
+    1. [python3](https://github.com/Senzing/knowledge-base/blob/main/WHATIS/python.md)
         1. Verify.
            Example:
 

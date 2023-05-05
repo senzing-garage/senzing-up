@@ -63,13 +63,13 @@ fi
 
 if [[ ( ! -n "$(command -v curl)" ) ]]; then
     echo "ERROR: curl is required."
-    echo "See https://github.com/Senzing/knowledge-base/blob/main/HOWTO/install-curl.md"
+    echo "See https://github.com/Senzing/knowledge-base/blob/main/WHATIS/curl.md"
     exit 1
 fi
 
 if [[ ( ! -n "$(command -v docker)" ) ]]; then
     echo "ERROR: docker is required."
-    echo "See https://github.com/Senzing/knowledge-base/blob/main/HOWTO/install-docker.md"
+    echo "See https://github.com/Senzing/knowledge-base/blob/main/WHATIS/docker.md"
     exit 1
 fi
 
@@ -78,7 +78,7 @@ if [[ ( -n "$(command -v python3)" ) ]]; then
 else
     echo "WARNING: python3 is not installed."
     echo "WARNING: Files will not be created in docker-bin directory."
-    echo "See https://github.com/Senzing/knowledge-base/blob/main/HOWTO/install-python-3.md"
+    echo "See https://github.com/Senzing/knowledge-base/blob/main/WHATIS/python.md"
 fi
 
 # Determine if Docker is running.
