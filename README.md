@@ -1,5 +1,11 @@
 # senzing-up
 
+## :no_entry: Deprecated
+
+Replaced by [senzinggo](https://github.com/Senzing/senzinggo)
+
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
 ## Synopsis
 
 [senzing-up.sh](senzing-up.sh) simplifies using Senzing Docker containers on Linux and macOS system.
